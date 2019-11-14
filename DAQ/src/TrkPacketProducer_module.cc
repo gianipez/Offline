@@ -447,7 +447,9 @@ namespace mu2e {
 	    calib_constant_type inverseionizationenergyls26 = 633;
 	    calib_constant_type panelTDCoffset = 0,  hvoffset = 0,  caloffset = 0;
 
-	    flag_mask_type f = filter(TDC0,TDC1,TOT0,TOT1,adc,clockstart,panelTDCoffset,hvoffset,caloffset,maxenergyls8,minenergyls8,gainrs15,inverseionizationenergyls26);
+	    flag_mask_type f = filter(TDC0,TDC1,TOT0,TOT1,adc,
+				      clockstart,panelTDCoffset,hvoffset,
+				      caloffset,maxenergyls8,minenergyls8,gainrs15,inverseionizationenergyls26);
 	    curHit.flags = f;
 
 	    adc_t preprocessing_flags = 0x0000 | (f << 8);
