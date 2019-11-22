@@ -374,10 +374,10 @@ produce( Event & event )
 	    // Until we have the final mapping, the BoardID is just a placeholder
 	    // adc_t BoardId    = cc.DBC_BoardID(pos,channelIdx);
         	      
-	    std::cout << "Crystal ID: " << crystalID << std::endl;		
-	    std::cout << "APD ID: " << apdID << std::endl;
-	    std::cout << "Time: " << hitPkt->Time << std::endl;
-	    std::cout << "NumSamples: " << hitPkt->NumberOfSamples << std::endl;
+	    std::cout << "Crystal ID: " << (int)crystalID << std::endl;		
+	    std::cout << "APD ID: " << (int)apdID << std::endl;
+	    std::cout << "Time: " << (int)hitPkt->Time << std::endl;
+	    std::cout << "NumSamples: " << (int)hitPkt->NumberOfSamples << std::endl;
 	    std::cout << "Waveform: {";
 	    for(size_t i=0; i<cwf.size(); i++) {
 	      std::cout << cwf[i];

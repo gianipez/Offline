@@ -5,10 +5,16 @@
 #
 # Contact person Tomonari Miyashita
 
+#include "fcl/minimalMessageService.fcl"
+#include "fcl/standardServices.fcl"
+
 process_name : FileDumper
 
+
+services : @local::Services.Reco
+
 source : {
-    module_type : RootInput
+  module_type : RootInput
     fileNames   : @nil
 
     # firstEvent  : 500
@@ -22,11 +28,11 @@ physics : {
 	    #      module_type     : BinaryPacketsFromDataBlocks
 	    module_type     : ArtBinaryPacketsFromDigis
 	    # diagLevel       : 2
-	    diagLevel       : 0
+	    diagLevel       : 2
 	    maxFullPrint    : 0
 
-	    includeTracker : 1
-	    includeCalorimeter : 0
+	    includeTracker : 0
+	    includeCalorimeter : 1
 	    # includeCosmicRayVeto: 1
 	    includeCosmicRayVeto: 0
 	    includeDMAHeaders: 1
