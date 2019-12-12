@@ -28,11 +28,11 @@ physics : {
 	    #      module_type     : BinaryPacketsFromDataBlocks
 	    module_type     : ArtBinaryPacketsFromDigis
 	    # diagLevel       : 2
-	    diagLevel       : 2
+	    diagLevel       : 0
 	    maxFullPrint    : 0
 
-	    includeTracker : 0
-	    includeCalorimeter : 1
+	    includeTracker : 1
+	    includeCalorimeter : 0
 	    # includeCosmicRayVeto: 1
 	    includeCosmicRayVeto: 0
 	    includeDMAHeaders: 1
