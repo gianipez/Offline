@@ -46,10 +46,15 @@ physics : {
   }
 
 
+  # t1 : [
+  # 	CalorimeterPacketProducer,
+  # 	TrackerPacketProducer,
+  # 	CosmicRayVetoPacketProducer
+  #      ] 
+
   t1 : [
 	CalorimeterPacketProducer,
-	TrackerPacketProducer,
-	CosmicRayVetoPacketProducer
+	TrackerPacketProducer
        ] 
 
   e1 : [ outfile ]
