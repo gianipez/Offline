@@ -70,8 +70,12 @@ StrawAndCaloDigisFromFragments::StrawAndCaloDigisFromFragments(fhicl::ParameterS
   , caloFragmentsTag_(pset.get<art::InputTag>("caloTag","daq:calo"))
 {
   produces<EventNumber_t>(); 
-  produces<mu2e::StrawDigiCollection>();
-  produces<mu2e::CaloDigiCollection>();
+  if (parseTRK_){
+    produces<mu2e::StrawDigiCollection>();
+  }
+  if (parseCAL_){
+    produces<mu2e::CaloDigiCollection>();
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -80,36 +84,40 @@ void
 StrawAndCaloDigisFromFragments::
 produce( Event & event )
 {
-
   art::EventNumber_t eventNumber = event.event();
 
-  // auto trkFragments = event.getValidHandle<artdaq::Fragments>(trkFragmentsTag_);
-  // auto calFragments = event.getValidHandle<artdaq::Fragments>(caloFragmentsTag_);
   art::Handle<artdaq::Fragments> trkFragments, calFragments;
-  event.getByLabel(trkFragmentsTag_ , trkFragments);
-  if (!trkFragments.isValid()){            
-    return;
+  size_t numTrkFrags(0), numCalFrags(0);
+  if (parseTRK_){
+    event.getByLabel(trkFragmentsTag_ , trkFragments);
+    if (!trkFragments.isValid()){            
+      return;
+    }
+    numTrkFrags = trkFragments->size();
   }
-  event.getByLabel(caloFragmentsTag_, calFragments);
-  if (!calFragments.isValid()){
-    return;
+  if (parseCAL_){
+    event.getByLabel(caloFragmentsTag_, calFragments);
+    if (!calFragments.isValid()){
+      return;
+    }
+    numCalFrags = calFragments->size();
   }
-  size_t numTrkFrags = trkFragments->size();
-  size_t numCalFrags = calFragments->size();
+  // size_t numTrkFrags = trkFragments->size();
+  // size_t numCalFrags = calFragments->size();
 
   if( diagLevel_ > 1 ) {
     std::cout << std::dec << "Producer: Run " << event.run() << ", subrun " << event.subRun()
 	      << ", event " << eventNumber << " has " << std::endl;
-    std::cout << trkFragments->size() << " TRK fragments, and ";
-    std::cout << calFragments->size() << " CAL fragments." << std::endl;
+    std::cout << numTrkFrags << " TRK fragments, and ";
+    std::cout << numCalFrags << " CAL fragments." << std::endl;
 
     size_t totalSize = 0;
-    for(size_t idx = 0; idx < trkFragments->size(); ++idx) {
+    for(size_t idx = 0; idx < numTrkFrags; ++idx) {
       auto size = ((*trkFragments)[idx]).size() * sizeof(artdaq::RawDataType);
       totalSize += size;
       //      std::cout << "\tTRK Fragment " << idx << " has size " << size << std::endl;
     }
-    for(size_t idx = 0; idx < calFragments->size(); ++idx) {
+    for(size_t idx = 0; idx < numCalFrags; ++idx) {
       auto size = ((*calFragments)[idx]).size() * sizeof(artdaq::RawDataType);
       totalSize += size;
       //      std::cout << "\tCAL Fragment " << idx << " has size " << size << std::endl;
@@ -333,21 +341,36 @@ produce( Event & event )
 	  continue;
 	}
 
+	if( diagLevel_ > 0 ) {
+	  std::cout <<"[StrawAndCaloDigiFromFragments] NEW CALDATA: NumberOfHits "<< calData->NumberOfHits << std::endl;
+	}
 
 	bool err = false;
 	for(size_t hitIdx = 0; hitIdx<calData->NumberOfHits; hitIdx++) {
 
 	  // Fill the CaloDigiCollection
-	  auto hitPkt = cc.GetCalorimeterReadoutPacket(curBlockIdx, hitIdx);
+	  const mu2e::ArtFragmentReader::CalorimeterHitReadoutPacket* hitPkt(0);
+	  hitPkt = cc.GetCalorimeterReadoutPacket(curBlockIdx, hitIdx);
 	  if(hitPkt == nullptr) {
 	    mf::LogError("StrawAndCaloDigisFromFragments") << "Error retrieving Calorimeter data from block " << curBlockIdx << " for hit " << hitIdx << "! Aborting processing of this block!";
 	    err = true;
 	    break;
 	  }
-
-
+	  
+	  if( diagLevel_ > 0 ) {
+	    std::cout <<"[StrawAndCaloDigiFromFragments] calo hit "<< hitIdx <<std::endl;
+	    std::cout <<"[StrawAndCaloDigiFromFragments] \thitPkt " << hitPkt << std::endl;
+	    std::cout <<"[StrawAndCaloDigiFromFragments] \tChNumber   " << (int)hitPkt->ChannelNumber  << std::endl;
+	    std::cout <<"[StrawAndCaloDigiFromFragments] \tDIRACA     " << (int)hitPkt->DIRACA 	  << std::endl;
+	    std::cout <<"[StrawAndCaloDigiFromFragments] \tDIRACB     " << (int)hitPkt->DIRACB	  << std::endl;
+	    std::cout <<"[StrawAndCaloDigiFromFragments] \tErrorFlags " << (int)hitPkt->ErrorFlags	  << std::endl;
+	    std::cout <<"[StrawAndCaloDigiFromFragments] \tTime	      " << (int)hitPkt->Time		  << std::endl;
+	    std::cout <<"[StrawAndCaloDigiFromFragments] \tNSamples   " << (int)hitPkt->NumberOfSamples << std::endl;
+	    std::cout <<"[StrawAndCaloDigiFromFragments] \tIndexMax   " << (int)hitPkt->IndexOfMaxDigitizerSample << std::endl;
+	  }
+	  
 	  auto first = cc.GetCalorimeterReadoutSample(curBlockIdx,hitIdx,0);
-	  auto last =  cc.GetCalorimeterReadoutSample(curBlockIdx, hitIdx, hitPkt->NumberOfSamples - 1);
+	  auto last  = cc.GetCalorimeterReadoutSample(curBlockIdx, hitIdx, hitPkt->NumberOfSamples - 1);
 	  if(first == nullptr || last == nullptr) {
 	    mf::LogError("StrawAndCaloDigisFromFragments") << "Error retrieving Calorimeter samples from block " << curBlockIdx << " for hit " << hitIdx << "! Aborting processing of this block!";
 	    err = true;
@@ -355,7 +378,7 @@ produce( Event & event )
 	  }
 	  std::vector<int> cwf(first,last);
 
-	  // IMPORTANT NOTE: As described in CaloPacketProducer_module.cc, we don't have a final
+	  // IMPORTANT NOTE: we don't have a final
 	  // mapping yet so for the moment, the BoardID field (described in docdb 4914) is just a
 	  // placeholder. Because we still need to know which crystal a hit belongs to, we are
 	  // temporarily storing the 4-bit apdID and 12-bit crystalID in the Reserved DIRAC A slot.
@@ -422,8 +445,12 @@ produce( Event & event )
   event.put(std::unique_ptr<EventNumber_t>(new EventNumber_t( eventNumber )));
   
   // Store the straw digis and calo digis in the event
-  event.put(std::move(straw_digis));
-  event.put(std::move(calo_digis));
+  if (parseTRK_){
+    event.put(std::move(straw_digis));
+  }
+  if (parseCAL_){
+    event.put(std::move(calo_digis));
+  }
 
 }  // produce()
 
