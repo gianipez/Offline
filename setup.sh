@@ -102,8 +102,8 @@ build=$($MU2E_BASE_RELEASE/buildopts --build)
 # products that need qualifiers.  Note it includes the '+' character
 # and is therefore different from the value shown in
 # SETUP_<productname> environment vars, or by the "ups active" command.
-export MU2E_UPS_QUALIFIERS=+e17:+${build}
-export MU2E_ART_SQUALIFIER=s87
+export MU2E_UPS_QUALIFIERS=+e19:+${build}
+export MU2E_ART_SQUALIFIER=s89
 
 MU2E_G4_GRAPHICS_QUALIFIER=''
 if [[ $($MU2E_BASE_RELEASE/buildopts --g4vis) == qt ]]; then
@@ -136,7 +136,7 @@ setup -B mu2e_artdaq_core v1_03_05 -q${MU2E_UPS_QUALIFIERS}:+${MU2E_ART_SQUALIFI
 setup -B pcie_linux_kernel_module v2_02_10 -q${MU2E_UPS_QUALIFIERS}:+${MU2E_ART_SQUALIFIER}
 
 setup -B heppdt   v3_04_01j -q${MU2E_UPS_QUALIFIERS}
-setup -B BTrk   v1_02_18  -q${MU2E_UPS_QUALIFIERS}
+setup -B BTrk   v1_02_18c  -q${MU2E_UPS_QUALIFIERS}
 setup -B cry   v1_7m  -q${MU2E_UPS_QUALIFIERS}
 setup -B gsl v2_5  -q${build}
 setup curl v7_64_1

@@ -6,7 +6,7 @@
 # same product+version+qualifiers: use with care.
 #
 
-export COMPILER_CODE=e17
+export COMPILER_CODE=e19
 export DEBUG_LEVEL=prof
 export PACKAGE_NAME=offline
 export PACKAGE_SOURCE=${MU2E_BASE_RELEASE}
