@@ -376,7 +376,10 @@ produce( Event & event )
 	    err = true;
 	    break;
 	  }
-	  std::vector<int> cwf(first,last);
+
+	  //the second argument is not included in the vector, so we need to add "+1"
+	  // because we want the "last" item included
+	  std::vector<int> cwf(first,last+1);
 
 	  // IMPORTANT NOTE: we don't have a final
 	  // mapping yet so for the moment, the BoardID field (described in docdb 4914) is just a
@@ -384,8 +387,8 @@ produce( Event & event )
 	  // temporarily storing the 4-bit apdID and 12-bit crystalID in the Reserved DIRAC A slot.
 	  // Also, note that until we have an actual map, channel index does not actually correspond
 	  // to the physical readout channel on a ROC.
-	    adc_t crystalID  = hitPkt->DIRACB & 0x0FFF;
-	    adc_t apdID      = hitPkt->DIRACB >> 12;
+	  adc_t crystalID  = hitPkt->DIRACB & 0x0FFF;
+	  adc_t apdID      = hitPkt->DIRACB >> 12;
 
 
 	  calo_digis->emplace_back((crystalID*2 + apdID),

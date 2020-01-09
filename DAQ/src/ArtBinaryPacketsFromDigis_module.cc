@@ -308,22 +308,20 @@ namespace mu2e {
     printf("[ArtBinaryPacketsFromDigis::printTrackerData] TOT0		: %i \n", (int)trkData.TOT0);
     printf("[ArtBinaryPacketsFromDigis::printTrackerData] TOT1		: %i \n", (int)trkData.TOT1);
     printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC00         : %i \n", (int)trkData.ADC00);
-    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC01  	: %i \n", (int)trkData.ADC01);
-    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC02  	: %i \n", (int)trkData.ADC02);
+    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC01  	: %i \n", (int)trkData.ADC01());
+    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC02  	: %i \n", (int)trkData.ADC02());
     printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC03  	: %i \n", (int)trkData.ADC03);
     printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC04  	: %i \n", (int)trkData.ADC04);
-    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC05A  	: %i \n", (int)trkData.ADC05A);
-    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC05B 	: %i \n", (int)trkData.ADC05B);
-    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC06  	: %i \n", (int)trkData.ADC06);
+    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC05 	: %i \n", (int)trkData.ADC05());
+    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC06  	: %i \n", (int)trkData.ADC06());
     printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC07  	: %i \n", (int)trkData.ADC07);
     printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC08  	: %i \n", (int)trkData.ADC08);
-    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC09  	: %i \n", (int)trkData.ADC09);
-    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC10A 	: %i \n", (int)trkData.ADC10A);
-    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC10B  	: %i \n", (int)trkData.ADC10B);
+    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC09  	: %i \n", (int)trkData.ADC09());
+    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC10  	: %i \n", (int)trkData.ADC10());
     printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC11  	: %i \n", (int)trkData.ADC11);
     printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC12  	: %i \n", (int)trkData.ADC12);
-    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC13 	: %i \n", (int)trkData.ADC13);
-    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC14 	: %i \n", (int)trkData.ADC14);
+    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC13 	: %i \n", (int)trkData.ADC13());
+    printf("[ArtBinaryPacketsFromDigis::printTrackerData] ADC14 	: %i \n", (int)trkData.ADC14());
     printf("[ArtBinaryPacketsFromDigis::printTrackerData] unused1 	: %i \n", (int)trkData.unused1);
     printf("[ArtBinaryPacketsFromDigis::printTrackerData] PreprocessingFlags : %i \n", (int)trkData.PreprocessingFlags);
 
@@ -412,9 +410,10 @@ namespace mu2e {
 	  curDTCID = dataBlock.first.DTCID;
 	  first = false;
 	}
-	printHeader(dataBlock.first);
-	if (dataBlock.first.PacketCount > 0) printTrackerData(dataBlock.second);
-
+	if (dataBlock.first.PacketCount > 0) {
+	  printHeader(dataBlock.first);
+	  printTrackerData(dataBlock.second);
+	}
       }
 
 
@@ -530,23 +529,21 @@ namespace mu2e {
 
     TrkTypes::ADCWaveform const& theWaveform = SD.adcWaveform();
 
-    TrkData.ADC00 = (theWaveform[0] & 0xFFF);  // 12b
-    TrkData.ADC01 = (theWaveform[1] & 0xFFF);  // 24b
-    TrkData.ADC02 = (theWaveform[2] & 0xFFF);  // 36b
-    TrkData.ADC03 = (theWaveform[3] & 0xFFF);  // 48b
-    TrkData.ADC04 = (theWaveform[4] & 0xFFF);  // 60b
-    TrkData.ADC05A = (theWaveform[5] & 0xF);  // 64b
-    TrkData.ADC05B = ((theWaveform[5] >> 4) & 0xFF);  // 8b
-    TrkData.ADC06 = (theWaveform[6] & 0xFFF);  // 20b
-    TrkData.ADC07 = (theWaveform[7] & 0xFFF);  // 32b
-    TrkData.ADC08 = (theWaveform[8] & 0xFFF);  // 44b
-    TrkData.ADC09 = (theWaveform[9] & 0xFFF);  // 56b
-    TrkData.ADC10A = (theWaveform[10] & 0xFF);  // 64b
-    TrkData.ADC10B = ((theWaveform[10] >> 8) & 0xF);  //  4b
-    TrkData.ADC11 = (theWaveform[11] & 0xFFF); // 16b
-    TrkData.ADC12 = (theWaveform[12] & 0xFFF); // 28b
-    TrkData.ADC13 = (theWaveform[13] & 0xFFF); // 40b
-    TrkData.ADC14 = (theWaveform[14] & 0xFFF); // 52b
+    TrkData.SetWaveform(0,  theWaveform[0]);
+    TrkData.SetWaveform(1,  theWaveform[1]);
+    TrkData.SetWaveform(2,  theWaveform[2]);
+    TrkData.SetWaveform(3,  theWaveform[3]);
+    TrkData.SetWaveform(4,  theWaveform[4]);
+    TrkData.SetWaveform(5,  theWaveform[5]);
+    TrkData.SetWaveform(6,  theWaveform[6]);
+    TrkData.SetWaveform(7,  theWaveform[7]);  
+    TrkData.SetWaveform(8,  theWaveform[8]);  
+    TrkData.SetWaveform(9,  theWaveform[9]);  
+    TrkData.SetWaveform(10, theWaveform[10]);  
+    TrkData.SetWaveform(11, theWaveform[11]); 
+    TrkData.SetWaveform(12, theWaveform[12]); 
+    TrkData.SetWaveform(13, theWaveform[13]); 
+    TrkData.SetWaveform(14, theWaveform[14]); 
 
     TrkData.PreprocessingFlags = 0;
 
@@ -682,12 +679,12 @@ namespace mu2e {
     calo_data_block_list_t caloData;
 
     if (_includeTracker > 0) {
-      processTrackerData(evt, eventNum,
+      processTrackerData(evt, ts,
 			 trackerData);
     }
 
     if (_includeCalorimeter > 0) {
-      processCalorimeterData(evt, eventNum,
+      processCalorimeterData(evt, ts,
 			     caloData);
     }
 
@@ -883,9 +880,10 @@ namespace mu2e {
 	  first = false;
 	  curDTCID = caloData[dataBlockIdx].first.DTCID;
 	}
-	printHeader(caloData[dataBlockIdx].first);
-	if (caloData[dataBlockIdx].first.PacketCount > 0) printCalorimeterData(caloData[dataBlockIdx].second);
-
+	if (caloData[dataBlockIdx].first.PacketCount > 0){
+	  printHeader(caloData[dataBlockIdx].first);
+	  printCalorimeterData(caloData[dataBlockIdx].second);
+	}
       }
 
     } // End loop over DataBlocks
@@ -940,7 +938,7 @@ namespace mu2e {
 	auto waveform_size = sizeof(uint16_t) * (caloData.second.waveformVec[i].size());
 	memcpy(&dataStream.back().first[pos], &(caloData.second.waveformVec[i][0]), waveform_size);
 	pos += waveform_size;
-      }//end loop pver the calorimeterHitReadoutPacketVector
+      }//end loop over the calorimeterHitReadoutPacketVector
     }
 
     while (pos % 16 != 0) pos++;
