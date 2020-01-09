@@ -55,7 +55,7 @@ physics : {
 outputs:  {
   outfile :  {
       module_type   :   RootOutput
-      fileName      :   "digis_from_frags.art"
+      fileName      :   "digis_from_frags_debug.art"
 
       outputCommands: [ "drop *_*_*_*",
 			"keep *_*_*_*"

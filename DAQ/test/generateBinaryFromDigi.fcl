@@ -25,7 +25,6 @@ physics : {
 
     producers : {
 	binaryOutput: {
-	    #      module_type     : BinaryPacketsFromDataBlocks
 	    module_type     : ArtBinaryPacketsFromDigis
 	    # diagLevel       : 2
 	    diagLevel       : 0
@@ -41,7 +40,8 @@ physics : {
 	    generateTimestampTable : 1
 	    generateBinaryFile : 1
 	    
-	    outputFile      : "DTC_packets.bin"
+	    #	    outputFile      : "DTC_packets_from_fragment.bin"
+	    outputFile      : "DTC_packets_bkg.bin"
 	    maxDMABlockSize : 32000
 	    bufferSize      : 1000
 	}
@@ -54,21 +54,6 @@ physics : {
     trigger_paths  : [t1]
     end_paths      : [e1]
 
-}
-
-outputs:  {
-    outfile :  {
-	module_type   :   RootOutput
-	fileName      :   "packet_data.root"
-
-	#    outputCommands: [ "drop *",
-	#		      "keep mu2e::StrawDigis_makeSD_*_*",
-	#		      "keep mu2e::CaloDigis_CaloDigiFromShower_*_*",
-	#                      "keep mu2e::DataBlocks_TrackerPacketProducer_*_*",
-	#                      "keep mu2e::DataBlocks_CalorimeterPacketProducer_*_*",
-	#                      "keep mu2e::DataBlocks_CosmicRayVetoPacketProducer_*_*"
-	#                     ]
-    }
 }
 
 #services.message.destinations.log.categories.ArtReport.reportEvery : 1
