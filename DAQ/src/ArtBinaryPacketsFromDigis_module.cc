@@ -366,7 +366,7 @@ namespace mu2e {
     }
 
 
-    if (sz + dataStream.back().second > sizeof(mu2e_databuff_t)) {
+    if (sz + dataStream.back().second >= sizeof(mu2e_databuff_t)) {
       closeDataBuffer(dataStream);
     }
 
@@ -906,7 +906,7 @@ namespace mu2e {
     while (sz % 16 != 0) sz++;
 
     assert(sz < sizeof(mu2e_databuff_t));
-    if (dataStream.back().second + sz > sizeof(mu2e_databuff_t)) {
+    if (dataStream.back().second + sz >= sizeof(mu2e_databuff_t)) {
       closeDataBuffer(dataStream);
     }
 
