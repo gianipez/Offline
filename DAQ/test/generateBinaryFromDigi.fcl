@@ -41,7 +41,7 @@ physics : {
 	    generateBinaryFile : 1
 	    
 	    #	    outputFile      : "DTC_packets_from_fragment.bin"
-	    outputFile      : "DTC_packets_bkg.bin"
+	    outputFile      : "DTC_packets_NoPrimary.bin"
 	    maxDMABlockSize : 32000
 	    bufferSize      : 1000
 	}
@@ -49,7 +49,7 @@ physics : {
 
 
     t1 : [ binaryOutput ] 
-    e1 : [ outfile ]
+    e1 : [  ]
 
     trigger_paths  : [t1]
     end_paths      : [e1]
