@@ -186,11 +186,11 @@ TprTrigger : {
 	# production sequence to find helicse
 	findHelices     : [ TTtimeClusterFinder, TThelixFinder ]
 	# production sequence to find TrackSeeds
-	KSFDeM          : [ TTtimeClusterFinder, TThelixFinder, TTKSFDeM ]
-	KSFDeP          : [ TTtimeClusterFinder, TThelixFinder, TTKSFDeP ]
+	KSFDeM          : [ TTtimeClusterFinder, TThelixFinder, TTHelixMergerDeM, TTKSFDeM ]
+	KSFDeP          : [ TTtimeClusterFinder, TThelixFinder, TTHelixMergerDeP, TTKSFDeP ]
 	# production sequence to find KalReps
-	KFFDeM          : [ TTtimeClusterFinder, TThelixFinder, TTKSFDeM, TTKFFDeM ]
-	KFFDeP          : [ TTtimeClusterFinder, TThelixFinder, TTKSFDeP, TTKFFDeP ]
+	KFFDeM          : [ TTtimeClusterFinder, TThelixFinder, TTHelixMergerDeM, TTKSFDeM, TTKFFDeM ]
+	KFFDeP          : [ TTtimeClusterFinder, TThelixFinder, TTHelixMergerDeP, TTKSFDeP, TTKFFDeP ]
     }
     
     # define standard outputs 
