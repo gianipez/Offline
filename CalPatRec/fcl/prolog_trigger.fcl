@@ -212,11 +212,11 @@ CprTrigger: { @table::CprTrigger
 	# production sequence to find helices
 	findHelices     : [ TTtimeClusterFinder, TThelixFinder ]
 	# production sequence to find TrackSeeds
-	KSFDeM          : [ TTCalTimePeakFinder, TTCalHelixFinderDe, TTCalSeedFitDem ]
-	KSFDeP          : [ TTCalTimePeakFinder, TTCalHelixFinderDe, TTCalSeedFitDep ]
+	KSFDeM          : [ TTCalTimePeakFinder, TTCalHelixFinderDe, TTCalHelixMergerDeM, TTCalSeedFitDem ]
+	KSFDeP          : [ TTCalTimePeakFinder, TTCalHelixFinderDe, TTCalHelixMergerDeP, TTCalSeedFitDep ]
 	# production sequence to find KalReps
-	KFFDeM          : [ TTCalTimePeakFinder, TTCalHelixFinderDe, TTCalSeedFitDem, TTCalTrkFitDem ]
-	KFFDeP          : [ TTCalTimePeakFinder, TTCalHelixFinderDe, TTCalSeedFitDep, TTCalTrkFitDep ]	
+	KFFDeM          : [ TTCalTimePeakFinder, TTCalHelixFinderDe, TTCalHelixMergerDeM, TTCalSeedFitDem, TTCalTrkFitDem ]
+	KFFDeP          : [ TTCalTimePeakFinder, TTCalHelixFinderDe, TTCalHelixMergerDeP, TTCalSeedFitDep, TTCalTrkFitDep ]	
     }
 }
 
