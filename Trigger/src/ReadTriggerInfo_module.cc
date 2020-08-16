@@ -83,14 +83,14 @@ namespace mu2e {
       kNTrigInfo     = 40,
       kNTrackTrig    = 20,
       kNTrackTrigVar = 50,
-      kNHelixTrig    = 10,
+      kNHelixTrig    = 40,
       kNHelixTrigVar = 130,
       kNCaloCalib    = 5,
       kNCaloCalibVar = 30,
       kNCaloOnly     = 5,
       kNCaloOnlyVar  = 30,
-      kNOcc          = 40,
-      kNOccVar       = 10
+      kNOcc          = 100,
+      kNOccVar       = 100
     };
 
     struct MCInfo {
@@ -514,7 +514,7 @@ namespace mu2e {
   //--------------------------------------------------------------------------------//
   //--------------------------------------------------------------------------------//
   void     ReadTriggerInfo::bookOccupancyInfoHist         (art::ServiceHandle<art::TFileService> & Tfs, occupancyHist_       &Hist){
-    
+
     for (int i=0; i<_nTrackTrig; ++i){
       art::TFileDirectory occInfoDir = Tfs->mkdir(Form("occInfoTrk_%i", i));
       Hist._hOccInfo  [i][0]  = occInfoDir.make<TH1F>(Form("hInstLum_%i"  ,i),"distrbution of instantaneous lum; p/#mu-bunch"  ,  1000, 1e6, 4e8);
@@ -962,7 +962,8 @@ namespace mu2e {
 		fillCaloTrigSeedInfo(index, clseed.get(), _caloTSeedHist);
 		if (passed) {
 		  passed = false;
-		  fillOccupancyInfo   (_nTrackTrig*2+index, sdCol, cdCol, _occupancyHist);
+		  // fillOccupancyInfo   (_nTrackTrig*2+index, sdCol, cdCol, _occupancyHist);
+		  fillOccupancyInfo   (_nTrackTrig + index, sdCol, cdCol, _occupancyHist);
 		}
 	      }
 	    }
