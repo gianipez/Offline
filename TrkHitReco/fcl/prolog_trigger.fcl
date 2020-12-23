@@ -17,6 +17,7 @@ TTmakeSH : {
     CaloClusterCollectionTag  : "CaloClusterFast"
     StrawDigiADCWaveformCollectionTag: "notUsed"
     FitType                          : firmwarepmp
+    ProtonBunchTimeTag                : "makeSD"
 }
 # combine hits in a panel
 TTmakePH : {
