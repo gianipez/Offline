@@ -62,6 +62,8 @@ DAQ : {
 	 deltaTPulses  : 5.
 	 pulseRatioMax : 1.1
 	 pulseRatioMin : 0.9
+	 # hitEDepMax    : 80.
+	 hitEDepMax    : 1000. # for testing
       }
 
       CrvDigi:
