@@ -38,9 +38,9 @@ namespace mu2e {
           const std::vector<art::Ptr<CaloRecoDigi>>&   recoCaloDigis  () const { return recoCaloDigis_;}
 
           void     setCrystalID      (int  ID) { crystalId_ = ID; }	  
-          void     setNSiPMs         (int   N) { nSiPMs_ = N;}	  
-          void     setTime           (float T) { time_ = T;}		  
-          void     setEDep           (float E) { eDep_ = E;} 	  
+          void     setNSiPMs         (int   N) { nSiPMs_    = N;  }	  
+          void     setTime           (float T) { time_      = T;  }		  
+          void     setEDep           (float E) { eDep_      = E;  }  	  
 
         private:
           int    crystalId_;
