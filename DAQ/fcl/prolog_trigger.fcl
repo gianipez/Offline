@@ -34,7 +34,7 @@ DAQ : {
 #	 bufferSize      : 1000
       }
       
-      makeSD:
+      makeSDOld:
       {
 	 module_type: StrawAndCaloDigisFromFragments
 	 diagLevel: 0
@@ -44,6 +44,14 @@ DAQ : {
 	 
 	 trkTag  : "daq:trk"
 	 caloTag : "daq:calo"
+      }
+
+      makeSD:
+      {
+	 module_type: StrawRecoFromFragments
+	 diagLevel : 0
+         useTrkADC : 0
+	 trkTag    : "daq:trk"
       }
 
       CaloDigiMaker:		

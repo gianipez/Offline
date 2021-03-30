@@ -62,10 +62,9 @@ CaloClusterTrigger :
    producers : {
        CaloClusterOnline   : @local::CaloClusterOnline
        CaloTrigger         : @local::CaloTrigger
-       CaloClusterFast     : @local::CaloClusterFast
+       CaloClusterFast     : @local::CaloClusterOnline 
    }
 
-   OldReco : [ OldCaloClusterFast ]
    Reco    : [ CaloClusterFast ]
 }
 
