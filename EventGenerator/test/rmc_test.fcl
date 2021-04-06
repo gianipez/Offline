@@ -9,61 +9,42 @@
 #include "fcl/standardProducers.fcl"
 #include "fcl/standardServices.fcl"
 
-#include "Stntuple/fcl/prolog.fcl"
-
-BEGIN_PROLOG
-  pdgCode    : @local::Particle.eminus
-  bgHitFiles : @nil
-END_PROLOG
-
-#include "Stntuple/fcl/templates.fcl"
-
+#include "EventGenerator/fcl/prolog.fcl"
 process_name : RmcTest
 
 source       : { module_type : EmptyEvent   }
-# source       : { module_type : RootInput   }
-
-outputs      : { @table::Stntuple.outputs   }
-producers    : { @table::Stntuple.producers }
-filters      : { @table::Stntuple.filters   }
-paths        : { @table::Stntuple.paths     }
+services : @local::Services.Sim
+services.TimeTracker : {
+	printSummary : true
+	dbOutput : {
+	    filename  : ""
+	    overwrite : false
+	}
+    }
+services.scheduler.wantSummary: true
 
 physics : {
-    producers: { @table::producers 
-	generate              : {  module_type:StoppedMuonRMCGun
-	    physics: {
-		rhoInternal           : 1. # 0.0071
-		spectrumShape         : "RMC"    # could also be "flat"
-#		spectrumShape         : "flat"
-		elow                  : 1.5
-#		elow                  : 100.0
-		ehi                   : 100.1
-		kMaxUserSet           : false
-		kMaxUser              : 100.1
-#		kMaxUserSet           : true
-		kMaxUser              : 90.1     # per Bergbush et al...
-		rmcFrac               : 1.43e-5
-		spectrumResolution    : 0.1 # hopefully, in MeV
-		blind                 : false
-		physicsVerbosityLevel : 0
-
+    producers: { 
+	generate : {  module_type    : RMCGun
+	    verbosityLevel : 0
+	    doHistograms   : true
+	    physics : {
+		genId                 : InternalRMC  #  InternalRMC or ExternalRMC, defines the generated process
+		spectrumShape         : "RMC"
+		elow                  : 1.5             # reported RMC BR's are measured for Egamam > 57 MeV
+		ehi                   : 90.1            # kinematic limit for RMC on Al is at 101.87
+		spectrumResolution    : 0.1
 	    }
-#	    czmin : 0.98 
-	    #radius ~ 650mm, dist ~ 5500mm --> cos(angle)~ 0.99
-#	    czmax : 1.0
-	    muonStops                 : @local::muonStops
-	    doHistograms              : true
+	    muonStops      : { @table::EventGenerator.muonStops }
 	}
     }
     
-    @table::paths
     
     p1            : [ generate ] 
 
 
     trigger_paths : [ p1 ]
 
-    #    out : [detectorOutput]  
     out           : [     ]
     end_paths     : [ out ]
 }

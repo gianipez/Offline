@@ -100,4 +100,26 @@ namespace mu2e {
     return s.time() + totalTimeOffset(s.simParticle());
   }
 
+  void SimParticleTimeOffset::print(const char* Option) const {
+
+    for(const auto& tag: inputs_) {
+      printf("tag : %s\n",tag.encode().data());
+    }
+
+    printf("   id   addr(ptr) addr(simp)  PDGCode  TimeOffset \n");
+    printf("------------------------------------------------- \n");
+	   
+    for(const auto& coll: offsets_) {
+      printf(" ----------------- offsets : \n");
+      for(const auto& obj: coll) {
+	art::Ptr<SimParticle> const& simp = obj.first;
+
+	int id     = simp->id().asUint();
+	int pdg_id = (int) simp->genParticle()->pdgId();
+
+	printf("%5i %8p %8p %10i %10.3f\n", id, &simp, simp.get(), pdg_id ,obj.second);
+      }
+    }
+  }
+
 }

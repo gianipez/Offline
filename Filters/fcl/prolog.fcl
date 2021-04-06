@@ -76,6 +76,12 @@ RecoCompression : {
     NoCosmicTimeMaps : [ "compressRecoMCs:protonTimeMap", "compressRecoMCs:muonTimeMap" ]
 }
 
+SeparateCaloShowerSteps : { module_type : SeparateCaloShowerSteps
+    inputTag : "compressDigiMCs"
+    crystalOutputInstance : "calorimeter"
+    sipmOutputInstance : "calorimeterRO"
+}
+
 DigiCompression : {
   @table::DigiCompression
 

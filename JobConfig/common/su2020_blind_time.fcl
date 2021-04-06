@@ -1,0 +1,36 @@
+# -*- mode:tcl -*-
+#------------------------------------------------------------------------------
+# make sure all blind time-related parameters are redefined in one place
+# BLIND_TIME is supposed to be set in the top-level job config FCL 
+# including this file directly
+#------------------------------------------------------------------------------
+services.ProditionsService.strawElectronics.flashEnd         : @erase
+services.ProditionsService.strawElectronics.flashEnd         : @local::BLIND_TIME
+
+physics.producers.CaloClusterFast.blindTime                  : @erase
+physics.producers.CaloClusterFast.blindTime                  : @local::BLIND_TIME
+
+physics.producers.CaloShowerStepROFromShowerStep.blindTime   : @erase
+physics.producers.CaloShowerStepROFromShowerStep.blindTime   : @local::BLIND_TIME
+
+physics.producers.CaloDigiFromShower.blindTime               : @erase 
+physics.producers.CaloDigiFromShower.blindTime               : @local::BLIND_TIME
+
+physics.producers.CaloProtoClusterFromCrystalHit.timeCut     : @erase
+physics.producers.CaloProtoClusterFromCrystalHit.timeCut     : @local::BLIND_TIME
+
+physics.producers.makeSH.minimumTime                         : @erase
+physics.producers.makeSH.minimumTime                         : @local::BLIND_TIME
+
+physics.producers.TimeClusterFindere.tmin                    : @erase
+physics.producers.TimeClusterFindere.tmin                    : @local::BLIND_TIME
+# 
+physics.filters.CalTimePeakFinder.minClusterTime             : @erase
+physics.filters.CalTimePeakFinder.minClusterTime             : @local::BLIND_TIME
+# 
+physics.producers.DeltaFinder.minimumTime                    : @erase
+physics.producers.DeltaFinder.minimumTime                    : @local::BLIND_TIME
+# 
+physics.filters.CalHelixFinderDe.HelixFinderAlg.minimumTime : @erase
+physics.filters.CalHelixFinderDe.HelixFinderAlg.minimumTime : @local::BLIND_TIME
+#------------------------------------------------------------------------------

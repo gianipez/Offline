@@ -69,65 +69,65 @@ TrackCaloMatching : { @table::TrackCaloMatching
 
     producers : { @table::TrackCaloMatching.producers 
 
-	TrackCaloIntersectionDem : { @table::TrackCaloMatching.producers.TrackCaloIntersection
-	    fitterModuleLabel    : MergePatRecDem
-	}
-	
-	TrackCaloIntersectionDmm : { @table::TrackCaloMatching.producers.TrackCaloIntersection 
-	    fitterModuleLabel    : MergePatRecDmm
-	}
-
-	TrackCaloIntersectionDep : { @table::TrackCaloMatching.producers.TrackCaloIntersection
-	    fitterModuleLabel    : MergePatRecDep
-	}
-
-	TrackCaloIntersectionDpp : { @table::TrackCaloMatching.producers.TrackCaloIntersection
-	    fitterModuleLabel    : MergePatRecDpp
-	}
-
-	TrackCaloIntersectionDmp : { @table::TrackCaloMatching.producers.TrackCaloIntersection 
-	    fitterModuleLabel    : MergePatRecDmp
-	}
-	
-	TrackCaloIntersectionUem : { @table::TrackCaloMatching.producers.TrackCaloIntersection
-	    fitterModuleLabel    : MergePatRecUem
-	}
-
-	TrackCaloIntersectionUmm : { @table::TrackCaloMatching.producers.TrackCaloIntersection 
-	    fitterModuleLabel    : MergePatRecUmm
-	}
-
-	TrackCaloIntersectionUep : { @table::TrackCaloMatching.producers.TrackCaloIntersection
-	    fitterModuleLabel    : MergePatRecUep
-	}
-
-	TrackCaloIntersectionUmp : { @table::TrackCaloMatching.producers.TrackCaloIntersection 
-	    fitterModuleLabel    : MergePatRecUmp
-	}
-
-	TrackCaloIntersectionCpr : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
-	    fitterModuleLabel    : MergePatRecCpr
-	}
-
-	TrackCaloIntersectionCprDem : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
-	    fitterModuleLabel    : MergePatRecCprDem
-	}
-
-	TrackCaloIntersectionCprDep : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
-	    fitterModuleLabel    : MergePatRecCprDep
-	}
-
-	TrackCaloIntersectionTpr : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
-	    fitterModuleLabel    : MergePatRecTpr
-	}
-
-	TrackCaloIntersectionTprDem : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
-	    fitterModuleLabel    : MergePatRecTprDem
-	}
-
-	TrackCaloIntersectionTprDep : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
-	    fitterModuleLabel    : MergePatRecTprDep
-	}
+# 	TrackCaloIntersectionDem : { @table::TrackCaloMatching.producers.TrackCaloIntersection
+# 	    fitterModuleLabel    : MergePatRecDem
+# 	}
+# 	
+# 	TrackCaloIntersectionDep : { @table::TrackCaloMatching.producers.TrackCaloIntersection
+# 	    fitterModuleLabel    : MergePatRecDep
+# 	}
+# 
+# 	TrackCaloIntersectionDmm : { @table::TrackCaloMatching.producers.TrackCaloIntersection 
+# 	    fitterModuleLabel    : MergePatRecDmm
+# 	}
+# 
+# 	TrackCaloIntersectionDpp : { @table::TrackCaloMatching.producers.TrackCaloIntersection
+# 	    fitterModuleLabel    : MergePatRecDpp
+# 	}
+# 
+# 	TrackCaloIntersectionDmp : { @table::TrackCaloMatching.producers.TrackCaloIntersection 
+# 	    fitterModuleLabel    : MergePatRecDmp
+# 	}
+# 	
+# 	TrackCaloIntersectionUem : { @table::TrackCaloMatching.producers.TrackCaloIntersection
+# 	    fitterModuleLabel    : MergePatRecUem
+# 	}
+# 
+# 	TrackCaloIntersectionUmm : { @table::TrackCaloMatching.producers.TrackCaloIntersection 
+# 	    fitterModuleLabel    : MergePatRecUmm
+# 	}
+# 
+# 	TrackCaloIntersectionUep : { @table::TrackCaloMatching.producers.TrackCaloIntersection
+# 	    fitterModuleLabel    : MergePatRecUep
+# 	}
+# 
+# 	TrackCaloIntersectionUmp : { @table::TrackCaloMatching.producers.TrackCaloIntersection 
+# 	    fitterModuleLabel    : MergePatRecUmp
+# 	}
+# 
+# 	TrackCaloIntersectionCpr : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
+# 	    fitterModuleLabel    : MergePatRecCpr
+# 	}
+# 
+# 	TrackCaloIntersectionCprDem : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
+# 	    fitterModuleLabel    : MergePatRecCprDem
+# 	}
+# 
+# 	TrackCaloIntersectionCprDep : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
+# 	    fitterModuleLabel    : MergePatRecCprDep
+# 	}
+# 
+# 	TrackCaloIntersectionTpr : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
+# 	    fitterModuleLabel    : MergePatRecTpr
+# 	}
+# 
+# 	TrackCaloIntersectionTprDem : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
+# 	    fitterModuleLabel    : MergePatRecTprDem
+# 	}
+# 
+# 	TrackCaloIntersectionTprDep : { @table::TrackCaloMatching.producers.TrackCaloIntersection # CalPatRec only
+# 	    fitterModuleLabel    : MergePatRecTprDep
+# 	}
 #------------------------------------------------------------------------------
 # define modules for cases where the helices were merged by MergeHelixFinder
 #------------------------------------------------------------------------------
@@ -139,12 +139,28 @@ TrackCaloMatching : { @table::TrackCaloMatching
 	    fitterModuleLabel    : KFFDeMHDar
 	}
 
+	TciUeMHPar : { @table::TrackCaloMatching.producers.TrackCaloIntersection
+	    fitterModuleLabel    : KFFUeMHPar
+	}
+
+	TciUeMHDar : { @table::TrackCaloMatching.producers.TrackCaloIntersection
+	    fitterModuleLabel    : KFFUeMHDar
+	}
+
 	TciDmuMHPar : { @table::TrackCaloMatching.producers.TrackCaloIntersection
 	    fitterModuleLabel    : KFFDmuMHPar
 	}
 
+	TciUmuMHPar : { @table::TrackCaloMatching.producers.TrackCaloIntersection
+	    fitterModuleLabel    : KFFUmuMHPar
+	}
+
 	TciDmuMHDar : { @table::TrackCaloMatching.producers.TrackCaloIntersection
 	    fitterModuleLabel    : KFFDmuMHDar
+	}
+
+	TciUmMHDar : { @table::TrackCaloMatching.producers.TrackCaloIntersection
+	    fitterModuleLabel    : KFFUmMHDar
 	}
     }
 }
@@ -155,81 +171,80 @@ TrackCaloMatching : { @table::TrackCaloMatching
 
     producers : { @table::TrackCaloMatching.producers 
     
-	TrackCaloMatchingDem  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionDem
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionDem.fitterModuleLabel     # MergePatRecDem
-	}
-
-	TrackCaloMatchingDmm  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionDmm
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionDmm.fitterModuleLabel     # MergePatRecDmm
-	}
-
-	TrackCaloMatchingDep  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionDep
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionDep.fitterModuleLabel     # MergePatRecDep
-	}
-
-	TrackCaloMatchingDpp  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionDpp
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionDpp.fitterModuleLabel     # MergePatRecDpp
-	}
-
-	TrackCaloMatchingDmp  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionDmp
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionDmp.fitterModuleLabel     # MergePatRecDmp
-	}
-
-	TrackCaloMatchingUem  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionUem
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionUem.fitterModuleLabel 
-	}
-	
-	TrackCaloMatchingUmm  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionUmm
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionUmm.fitterModuleLabel
-	}
-
-	TrackCaloMatchingUep  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionUep
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionUep.fitterModuleLabel 
-	}
-	
-	TrackCaloMatchingUmp  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionUmp
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionUmp.fitterModuleLabel
-	}
-
-	TrackCaloMatchingCpr  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionCpr
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionCpr.fitterModuleLabel
-	}
-
-	TrackCaloMatchingTpr  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionTpr
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionTpr.fitterModuleLabel
-	}
-
-	TrackCaloMatchingCprDem  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionCprDem
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionCprDem.fitterModuleLabel
-	}
-
-	TrackCaloMatchingCprDep  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionCprDep
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionCprDep.fitterModuleLabel
-	}
-
-	TrackCaloMatchingTprDem  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionTprDem
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionTprDem.fitterModuleLabel
-	}
-
-	TrackCaloMatchingTprDep  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
-	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionTprDep
-	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionTprDep.fitterModuleLabel
-	}
-
+# 	TrackCaloMatchingDem  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionDem
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionDem.fitterModuleLabel     # MergePatRecDem
+# 	}
+# 
+# 	TrackCaloMatchingDmm  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionDmm
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionDmm.fitterModuleLabel     # MergePatRecDmm
+# 	}
+# 
+# 	TrackCaloMatchingDep  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionDep
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionDep.fitterModuleLabel     # MergePatRecDep
+# 	}
+# 
+# 	TrackCaloMatchingDpp  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionDpp
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionDpp.fitterModuleLabel     # MergePatRecDpp
+# 	}
+# 
+# 	TrackCaloMatchingDmp  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionDmp
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionDmp.fitterModuleLabel     # MergePatRecDmp
+# 	}
+# 
+# 	TrackCaloMatchingUem  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionUem
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionUem.fitterModuleLabel 
+# 	}
+# 	
+# 	TrackCaloMatchingUmm  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionUmm
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionUmm.fitterModuleLabel
+# 	}
+# 
+# 	TrackCaloMatchingUep  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionUep
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionUep.fitterModuleLabel 
+# 	}
+# 	
+# 	TrackCaloMatchingUmp  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionUmp
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionUmp.fitterModuleLabel
+# 	}
+# 
+# 	TrackCaloMatchingCpr  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionCpr
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionCpr.fitterModuleLabel
+# 	}
+# 
+# 	TrackCaloMatchingTpr  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionTpr
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionTpr.fitterModuleLabel
+# 	}
+# 
+# 	TrackCaloMatchingCprDem  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionCprDem
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionCprDem.fitterModuleLabel
+# 	}
+# 
+# 	TrackCaloMatchingCprDep  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionCprDep
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionCprDep.fitterModuleLabel
+# 	}
+# 
+# 	TrackCaloMatchingTprDem  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionTprDem
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionTprDem.fitterModuleLabel
+# 	}
+# 
+# 	TrackCaloMatchingTprDep  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+# 	    trkToCaloExtrapolModuleLabel: TrackCaloIntersectionTprDep
+# 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TrackCaloIntersectionTprDep.fitterModuleLabel
+# 	}
 #------------------------------------------------------------------------------
 # define modules for the case were is MergeHelixFinder sequence is used - both signs
 #------------------------------------------------------------------------------
@@ -238,9 +253,19 @@ TrackCaloMatching : { @table::TrackCaloMatching
 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TciDeMHPar.fitterModuleLabel
 	}
 
+	TcmUeMHPar  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+	    trkToCaloExtrapolModuleLabel: TciUeMHPar
+	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TciUeMHPar.fitterModuleLabel
+	}
+
 	TcmDeMHDar  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
 	    trkToCaloExtrapolModuleLabel: TciDeMHDar
 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TciDeMHDar.fitterModuleLabel
+	}
+
+	TcmUeMHDar  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+	    trkToCaloExtrapolModuleLabel: TciUeMHDar
+	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TciUeMHDar.fitterModuleLabel
 	}
 
 	TcmDmuMHPar  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
@@ -248,9 +273,19 @@ TrackCaloMatching : { @table::TrackCaloMatching
 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TciDmuMHPar.fitterModuleLabel
 	}
 
+	TcmUmuMHPar  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+	    trkToCaloExtrapolModuleLabel: TciUmuMHPar
+	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TciUmuMHPar.fitterModuleLabel
+	}
+
 	TcmDmuMHDar  : { @table::TrackCaloMatching.producers.TrackCaloMatching
 	    trkToCaloExtrapolModuleLabel: TciDmuMHDar
 	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TciDmuMHDar.fitterModuleLabel
+	}
+
+	TcmUmMHDar  : { @table::TrackCaloMatching.producers.TrackCaloMatching 
+	    trkToCaloExtrapolModuleLabel: TciUmMHDar
+	    fitterModuleLabel           : @local::TrackCaloMatching.producers.TciUmMHDar.fitterModuleLabel
 	}
     }
 }
@@ -259,30 +294,36 @@ TrackCaloMatching : { @table::TrackCaloMatching
 #------------------------------------------------------------------------------
 TrackCaloMatching.matching         : [ TrackCaloIntersection   , TrackCaloMatching    ]   # this is the default
 
-TrackCaloMatching.matching_cpr     : [ TrackCaloIntersectionCpr, TrackCaloMatchingCpr ] 
-TrackCaloMatching.matching_tpr     : [ TrackCaloIntersectionTpr, TrackCaloMatchingTpr ] 
+# TrackCaloMatching.matching_cpr     : [ TrackCaloIntersectionCpr, TrackCaloMatchingCpr ] 
+# TrackCaloMatching.matching_tpr     : [ TrackCaloIntersectionTpr, TrackCaloMatchingTpr ] 
+# 
+# TrackCaloMatching.matching_cpr_dem : [ TrackCaloIntersectionCprDem, TrackCaloMatchingCprDem ]
+# TrackCaloMatching.matching_tpr_dem : [ TrackCaloIntersectionTprDem, TrackCaloMatchingTprDem ]
+# 
+# TrackCaloMatching.matching_cpr_dep : [ TrackCaloIntersectionCprDep, TrackCaloMatchingCprDep ]
+# TrackCaloMatching.matching_tpr_dep : [ TrackCaloIntersectionTprDep, TrackCaloMatchingTprDep ]
 
-TrackCaloMatching.matching_cpr_dem : [ TrackCaloIntersectionCprDem, TrackCaloMatchingCprDem ]
-TrackCaloMatching.matching_tpr_dem : [ TrackCaloIntersectionTprDem, TrackCaloMatchingTprDem ]
-
-TrackCaloMatching.matching_cpr_dep : [ TrackCaloIntersectionCprDep, TrackCaloMatchingCprDep ]
-TrackCaloMatching.matching_tpr_dep : [ TrackCaloIntersectionTprDep, TrackCaloMatchingTprDep ]
-
-TrackCaloMatching.matching_dem     : [ TrackCaloIntersectionDem, TrackCaloMatchingDem ]
-TrackCaloMatching.matching_dmm     : [ TrackCaloIntersectionDmm, TrackCaloMatchingDmm ]
-TrackCaloMatching.matching_dep     : [ TrackCaloIntersectionDep, TrackCaloMatchingDep ]
-TrackCaloMatching.matching_dpp     : [ TrackCaloIntersectionDpp, TrackCaloMatchingDpp ]
-TrackCaloMatching.matching_dmp     : [ TrackCaloIntersectionDmp, TrackCaloMatchingDmp ]
-TrackCaloMatching.matching_uem     : [ TrackCaloIntersectionUem, TrackCaloMatchingUem ]
-TrackCaloMatching.matching_umm     : [ TrackCaloIntersectionUmm, TrackCaloMatchingUmm ]
-TrackCaloMatching.matching_uep     : [ TrackCaloIntersectionUep, TrackCaloMatchingUep ]
-TrackCaloMatching.matching_ump     : [ TrackCaloIntersectionUmp, TrackCaloMatchingUmp ]
+# TrackCaloMatching.matching_dem     : [ TrackCaloIntersectionDem, TrackCaloMatchingDem ]
+# TrackCaloMatching.matching_dmm     : [ TrackCaloIntersectionDmm, TrackCaloMatchingDmm ]
+# TrackCaloMatching.matching_dep     : [ TrackCaloIntersectionDep, TrackCaloMatchingDep ]
+# TrackCaloMatching.matching_dpp     : [ TrackCaloIntersectionDpp, TrackCaloMatchingDpp ]
+# TrackCaloMatching.matching_dmp     : [ TrackCaloIntersectionDmp, TrackCaloMatchingDmp ]
+# TrackCaloMatching.matching_uem     : [ TrackCaloIntersectionUem, TrackCaloMatchingUem ]
+# TrackCaloMatching.matching_umm     : [ TrackCaloIntersectionUmm, TrackCaloMatchingUmm ]
+# TrackCaloMatching.matching_uep     : [ TrackCaloIntersectionUep, TrackCaloMatchingUep ]
+# TrackCaloMatching.matching_ump     : [ TrackCaloIntersectionUmp, TrackCaloMatchingUmp ]
 
 TrackCaloMatching.matching_DeMHPar  : [ TciDeMHPar , TcmDeMHPar  ] 
 TrackCaloMatching.matching_DeMHDar  : [ TciDeMHDar , TcmDeMHDar  ] 
 
 TrackCaloMatching.matching_DmuMHPar : [ TciDmuMHPar, TcmDmuMHPar ] 
 TrackCaloMatching.matching_DmuMHDar : [ TciDmuMHDar, TcmDmuMHDar ] 
+
+TrackCaloMatching.matching_UeMHPar  : [ TciUeMHPar , TcmUeMHPar  ] 
+TrackCaloMatching.matching_UmMHPar  : [ TciUmMHPar , TcmUmMHPar  ] 
+
+TrackCaloMatching.matching_UeMHDar  : [ TciUeMHDar , TcmUeMHDar  ] 
+TrackCaloMatching.matching_UmMHDar  : [ TciUmMHDar , TcmUmMHDar  ] 
 #------------------------------------------------------------------------------
 # preserve backward compatibility
 #------------------------------------------------------------------------------
@@ -363,11 +404,9 @@ END_PROLOG
 BEGIN_PROLOG
 	
         
-TrackCaloIntersectionDeM : 
-{
-  module_type            : TrackCaloIntersectionMVA
-  fitterModuleLabel      : KFFDeM
-  downstream             : true
+TrackCaloIntersectionMVADeM : { module_type : TrackCaloIntersectionMVA
+  fitterModuleLabel         : KFFDeM
+  downstream                : true
   checkExit              : true
   pathStep               : 2
   tolerance              : 1
@@ -375,9 +414,7 @@ TrackCaloIntersectionDeM :
   diagLevel              : 0
 }  
 
-TrackCaloIntersectionDmuM :
-{
-  module_type            : TrackCaloIntersectionMVA
+TrackCaloIntersectionMVADmuM : { module_type : TrackCaloIntersectionMVA
   fitterModuleLabel      : KFFDmuM
   downstream             : true
   checkExit              : true
@@ -388,13 +425,9 @@ TrackCaloIntersectionDmuM :
 }  
 
 
-
-
-TrkCaloMatcherExtDeM :
-{
-  module_type             : TrackCaloMatchingExtend
+TrkCaloMatcherExtDeM : { module_type : TrackCaloMatchingExtend
   caloClusterModuleLabel  : CaloClusterFromProtoCluster
-  trkIntersectModuleLabel : TrackCaloIntersectionDeM
+  trkIntersectModuleLabel : TrackCaloIntersectionMVADeM
   trackExtend             : 41.7
   dtOffset                : -2.072
   sigmaT                  : 0.8
@@ -403,11 +436,9 @@ TrkCaloMatcherExtDeM :
   diagLevel               : 0
 }  
 
-TrkCaloMatcherMVADeM :
-{
-  module_type             : TrackCaloMatchingMVA
+TrkCaloMatcherMVADeM : { module_type : TrackCaloMatchingMVA
   caloClusterModuleLabel  : CaloClusterFromProtoCluster
-  trkIntersectModuleLabel : TrackCaloIntersectionDeM
+  trkIntersectModuleLabel : TrackCaloIntersectionMVADeM
   BDTWeightsX             : "TrackCaloMatching/test/TMVARegression_BDTGXEl.weights.xml"
   BDTWeightsY             : "TrackCaloMatching/test/TMVARegression_BDTGYEl.weights.xml"
   diagLevel               : 0
@@ -417,13 +448,9 @@ TrkCaloMatcherMVADeM :
   chi2Cut                 : 50
 }  
 
-
-
-TrkCaloMatcherExtDmuM :
-{
-  module_type             : TrackCaloMatchingExtend
+TrkCaloMatcherExtDmuM : { module_type : TrackCaloMatchingExtend
   caloClusterModuleLabel  : CaloClusterFromProtoCluster
-  trkIntersectModuleLabel : TrackCaloIntersectionDmuM
+  trkIntersectModuleLabel : TrackCaloIntersectionMVADmuM
   trackExtend             : 22.3
   dtOffset                : -2.072
   sigmaT                  : 0.8
@@ -432,11 +459,9 @@ TrkCaloMatcherExtDmuM :
   diagLevel               : 0
 }  
 
-TrkCaloMatcherMVADmuM :
-{
-  module_type             : TrackCaloMatchingMVA
+TrkCaloMatcherMVADmuM : { module_type : TrackCaloMatchingMVA
   caloClusterModuleLabel  : CaloClusterFromProtoCluster
-  trkIntersectModuleLabel : TrackCaloIntersectionDmuM
+  trkIntersectModuleLabel : TrackCaloIntersectionMVADmuM
   BDTWeightsX             : "TrackCaloMatching/test/TMVARegression_BDTGXMu.weights.xml"
   BDTWeightsY             : "TrackCaloMatching/test/TMVARegression_BDTGYMu.weights.xml"
   diagLevel               : 0
@@ -446,13 +471,11 @@ TrkCaloMatcherMVADmuM :
   chi2Cut                 : 50
 }  
 
-
-TrackCaloMatchingMVA : 
-{
-   
+TrackCaloMatchingMVA : { 
+  
    producers : {
-      TrackCaloIntersectionDeM   : @local::TrackCaloIntersectionDeM
-      TrackCaloIntersectionDmuM  : @local::TrackCaloIntersectionDmuM
+      TrackCaloIntersectionDeM   : @local::TrackCaloIntersectionMVADeM
+      TrackCaloIntersectionDmuM  : @local::TrackCaloIntersectionMVADmuM
       TrkCaloMatcherMVADeM       : @local::TrkCaloMatcherMVADeM
       TrkCaloMatcherMVADmuM      : @local::TrkCaloMatcherMVADmuM
    }
@@ -461,18 +484,16 @@ TrackCaloMatchingMVA :
 	              TrkCaloMatcherMVADeM, TrkCaloMatcherMVADmuM ]
 }
 
-TrackCaloMatchingExt : 
-{
+TrackCaloMatchingExt : {
    
    producers : {
-      TrackCaloIntersectionDeM   : @local::TrackCaloIntersectionDeM
-      TrackCaloIntersectionDmuM  : @local::TrackCaloIntersectionDmuM
+      TrackCaloIntersectionDeM   : @local::TrackCaloIntersectionMVADeM
+      TrackCaloIntersectionDmuM  : @local::TrackCaloIntersectionMVADmuM
       TrkCaloMatcherExtDeM       : @local::TrkCaloMatcherExtDeM
       TrkCaloMatcherExtDmuM      : @local::TrkCaloMatcherExtDmuM
-
    }
    
-   TrkCaloMatchExt : [TrackCaloIntersectionDeM, TrackCaloIntersectionDmuM, 
+   TrkCaloMatchExt : [TrackCaloIntersectionMVADeM, TrackCaloIntersectionMVADmuM, 
 	              TrkCaloMatcherExtDeM, TrkCaloMatcherExtDmuM ]
 }
 

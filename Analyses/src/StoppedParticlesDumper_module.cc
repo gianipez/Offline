@@ -111,6 +111,12 @@ namespace mu2e {
           false
           };
 
+      fhicl::Atom<bool> writePbarsPions {
+        Name("writePbarsPions"),
+          Comment("if true, write out proper time, equal to time (need for pions coming from pbars)"),
+          false
+          };
+
       fhicl::Sequence<int> decayOffPDGCodes {
         Name("decayOffPDGCodes"),
           Comment("A list of PDG IDs of particles that had their decay process turned off during\n"
@@ -137,6 +143,7 @@ namespace mu2e {
     art::InputTag input_;
     bool writeProperTime_;
     bool writePbars_;
+    bool writePbarsPions_;
     std::vector<art::InputTag> hitColls_;
 
     std::vector<int> decayOffCodes_;
@@ -155,6 +162,7 @@ namespace mu2e {
     input_(conf().inputCollection()),
     writeProperTime_(conf().writeProperTime()),
     writePbars_(conf().writePbars()),
+    writePbarsPions_(conf().writePbarsPions()),
     nt_()
   {
     if(writeProperTime_) {
@@ -171,11 +179,14 @@ namespace mu2e {
     art::ServiceHandle<art::TFileService> tfs;
     std::string branchDesc("x/F:y/F:z/F:time/F");
 
-				// don't change the order of ifs here! 
+    // don't change the order of ifs here! 
     if (writePbars_) {
       branchDesc += ":tauNormalized/F:momentum/F:cosTheta/F";
     }
     else if (writeProperTime_) {
+      branchDesc += ":tauNormalized/F";
+    }
+    else if (writePbarsPions_) {
       branchDesc += ":tauNormalized/F";
     }
     
@@ -241,6 +252,8 @@ namespace mu2e {
       mom    = pbar->vect().mag();
       costh  = pbar->vect().cosTheta(prot->vect());
     }
+
+    //    tau = p->endGlobalTime();
 
     data_ = StopInfo(p, spMCColls, tau, mom, costh);
     nt_->Fill();

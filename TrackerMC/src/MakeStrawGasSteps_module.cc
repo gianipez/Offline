@@ -229,64 +229,67 @@ namespace mu2e {
       _firstEvent = false;
     }
     if(stepsHandles.empty()){
-      throw cet::exception("SIM")<<"mu2e::MakeStrawGasSteps: No StepPointMC collections found for tracker" << endl;
+      // throw cet::exception("SIM")<<"mu2e::MakeStrawGasSteps: No StepPointMC collections found for tracker" << endl;
+      mf::LogWarning("mu2e::MakeStrawGasSteps") << "No StepPointMC collections found for tracker\n";
     }
-    // diagnostic counters
-    unsigned nspmcs(0), nspss(0);
-    // Loop over StepPointMC collections
-    for( auto const& handle : stepsHandles) {
-      StepPointMCCollection const& steps(*handle);
-      nspmcs += steps.size();
-      // see if we should compress deltas from this collection
-      bool dcomp = _combineDeltas && (handle.provenance()->moduleLabel() != _keepDeltas);
-      if(_debug > 1){
-	if(dcomp)
-	  cout << "Compressing collection " << handle.provenance()->moduleLabel() << endl;
-	else
-	  cout << "No compression for collection " << handle.provenance()->moduleLabel() << endl;
-      }
-      // Loop over the StepPointMCs in this collection and sort them by straw and SimParticle
-      SPSMap spsmap; // map of step points by straw,sim particle
-      fillMap(tracker,deadStraw,handle, spsmap);
-      // optionally combine delta-rays that never leave the straw with their parent particle
-      if(dcomp)compressDeltas(spsmap);
-      nspss += spsmap.size();
-      // convert the SimParticle/straw pair steps into StrawGas objects and fill the collection.  
-      for(auto ispsmap = spsmap.begin(); ispsmap != spsmap.end(); ispsmap++){
-	auto pid = ispsmap->first.second; // primary SimParticle
-	auto const& spmcptrs = ispsmap->second;
-	auto const& straw = tracker.getStraw(ispsmap->first.first);
-	auto const& simptr = spmcptrs.front()->simParticle();
-	auto pref = pdt->particle(simptr->pdgId());
-	ParticleData const* pdata(0);
-	if(pref.isValid())pdata = &pref.ref();
-	StrawGasStep sgs;
-	fillStep(spmcptrs,straw,pdata,pid,sgs);
-	sgsc->push_back(sgs);
-	auto sgsptr = art::Ptr<StrawGasStep>(StrawGasStepCollectionPID,sgsc->size()-1,StrawGasStepCollectionGetter);
-	// optionall add Assns for all StepPoints, including delta-rays
-	if(_allAssns){
-	  for(auto const& spmcptr : spmcptrs)
-	    sgsa->addSingle(sgsptr,spmcptr);
-	}
-	if(_diag > 0)fillStepDiag(straw,sgs,spmcptrs);
+    else {
+      // diagnostic counters
+      unsigned nspmcs(0), nspss(0);
+      // Loop over StepPointMC collections
+      for( auto const& handle : stepsHandles) {
+	StepPointMCCollection const& steps(*handle);
+	nspmcs += steps.size();
+	// see if we should compress deltas from this collection
+	bool dcomp = _combineDeltas && (handle.provenance()->moduleLabel() != _keepDeltas);
 	if(_debug > 1){
-	  // checks and printout
-	  cout << " SGS with " << spmcptrs.size() << " steps, StrawId = " << sgs.strawId()  << " SimParticle Key = " << sgs.simParticle()->id()
-	    << " edep = " << sgs.ionizingEdep() << " pathlen = " << sgs.stepLength() << " glen = " << sqrt((sgs.endPosition()-sgs.startPosition()).mag2()) << " width = " << sgs.width()
-	    << " time = " << sgs.time() << endl;
-
-	  // check if end is inside physical straw
-	  const Straw& straw = tracker.getStraw(sgs.strawId());
-	  static double r2 = straw.innerRadius()*straw.innerRadius();
-	  Hep3Vector hend = Geom::Hep3Vec(sgs.endPosition());
-	  double rd2 = (hend-straw.getMidPoint()).perpPart(straw.getDirection()).mag2();
-	  if(rd2 - r2 > 1e-5 ) cout << "End outside straw, radius " << sqrt(rd2) << endl;
+	  if(dcomp)
+	    cout << "Compressing collection " << handle.provenance()->moduleLabel() << endl;
+	  else
+	    cout << "No compression for collection " << handle.provenance()->moduleLabel() << endl;
 	}
-      } // end of pair loop
-    } // end of collection loop
-    if(_debug > 0){
-      cout << "Total number of StrawGasSteps " << sgsc->size() << " , StepPointMCs = " << nspmcs << endl;
+	// Loop over the StepPointMCs in this collection and sort them by straw and SimParticle
+	SPSMap spsmap; // map of step points by straw,sim particle
+	fillMap(tracker,deadStraw,handle, spsmap);
+	// optionally combine delta-rays that never leave the straw with their parent particle
+	if(dcomp)compressDeltas(spsmap);
+	nspss += spsmap.size();
+	// convert the SimParticle/straw pair steps into StrawGas objects and fill the collection.  
+	for(auto ispsmap = spsmap.begin(); ispsmap != spsmap.end(); ispsmap++){
+	  auto pid = ispsmap->first.second; // primary SimParticle
+	  auto const& spmcptrs = ispsmap->second;
+	  auto const& straw = tracker.getStraw(ispsmap->first.first);
+	  auto const& simptr = spmcptrs.front()->simParticle();
+	  auto pref = pdt->particle(simptr->pdgId());
+	  ParticleData const* pdata(0);
+	  if(pref.isValid())pdata = &pref.ref();
+	  StrawGasStep sgs;
+	  fillStep(spmcptrs,straw,pdata,pid,sgs);
+	  sgsc->push_back(sgs);
+	  auto sgsptr = art::Ptr<StrawGasStep>(StrawGasStepCollectionPID,sgsc->size()-1,StrawGasStepCollectionGetter);
+	  // optionall add Assns for all StepPoints, including delta-rays
+	  if(_allAssns){
+	    for(auto const& spmcptr : spmcptrs)
+	      sgsa->addSingle(sgsptr,spmcptr);
+	  }
+	  if(_diag > 0)fillStepDiag(straw,sgs,spmcptrs);
+	  if(_debug > 1){
+	    // checks and printout
+	    cout << " SGS with " << spmcptrs.size() << " steps, StrawId = " << sgs.strawId()  << " SimParticle Key = " << sgs.simParticle()->id()
+		 << " edep = " << sgs.ionizingEdep() << " pathlen = " << sgs.stepLength() << " glen = " << sqrt((sgs.endPosition()-sgs.startPosition()).mag2()) << " width = " << sgs.width()
+		 << " time = " << sgs.time() << endl;
+
+	    // check if end is inside physical straw
+	    const Straw& straw = tracker.getStraw(sgs.strawId());
+	    static double r2 = straw.innerRadius()*straw.innerRadius();
+	    Hep3Vector hend = Geom::Hep3Vec(sgs.endPosition());
+	    double rd2 = (hend-straw.getMidPoint()).perpPart(straw.getDirection()).mag2();
+	    if(rd2 - r2 > 1e-5 ) cout << "End outside straw, radius " << sqrt(rd2) << endl;
+	  }
+	} // end of pair loop
+      } // end of collection loop
+      if(_debug > 0){
+	cout << "Total number of StrawGasSteps " << sgsc->size() << " , StepPointMCs = " << nspmcs << endl;
+      }
     }
     event.put(move(sgsc));
     if(_allAssns) event.put(move(sgsa));

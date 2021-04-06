@@ -1,0 +1,7 @@
+#
+
+
+* DeltaFinder module:  
+
+  - operates on single-straw-hit ComboHits : makeSH !
+

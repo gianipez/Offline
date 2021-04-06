@@ -26,10 +26,12 @@
 #include "Print/inc/CaloClusterPrinter.hh"
 #include "Print/inc/CrvDigiPrinter.hh"
 #include "Print/inc/CrvDigiMCPrinter.hh"
+#include "Print/inc/CrvPhotonsPrinter.hh"
 #include "Print/inc/CrvRecoPulsePrinter.hh"
 #include "Print/inc/CrvCoincidenceClusterPrinter.hh"
 #include "Print/inc/StrawDigiPrinter.hh"
 #include "Print/inc/StrawDigiMCPrinter.hh"
+#include "Print/inc/StrawGasStepPrinter.hh"
 #include "Print/inc/StrawHitPrinter.hh"
 #include "Print/inc/StrawHitFlagPrinter.hh"
 #include "Print/inc/BkgClusterPrinter.hh"
@@ -41,6 +43,7 @@
 #include "Print/inc/SimParticleTimeMapPrinter.hh"
 #include "Print/inc/ComboHitPrinter.hh"
 #include "Print/inc/TimeClusterPrinter.hh"
+#include "Print/inc/HelixSeedPrinter.hh"
 #include "Print/inc/KalSeedPrinter.hh"
 #include "Print/inc/PhysicalVolumePrinter.hh"
 #include "Print/inc/TriggerResultsPrinter.hh"
@@ -84,6 +87,8 @@ namespace mu2e {
 	fhicl::Name("crvDigiPrinter") }; 
       fhicl::Table<ProductPrinter::Config> crvDigiMCPrinter { 
 	fhicl::Name("crvDigiMCPrinter") }; 
+      fhicl::Table<ProductPrinter::Config> crvPhotonsPrinter { 
+	fhicl::Name("crvPhotonsPrinter") }; 
       fhicl::Table<ProductPrinter::Config> crvRecoPulsePrinter { 
 	fhicl::Name("crvRecoPulsePrinter") }; 
       fhicl::Table<ProductPrinter::Config> crvCoincidenceClusterPrinter { 
@@ -94,6 +99,8 @@ namespace mu2e {
       	fhicl::Name("strawDigiMCPrinter") }; 
       fhicl::Table<ProductPrinter::ConfigE> strawHitPrinter { 
       	fhicl::Name("strawHitPrinter") }; 
+      fhicl::Table<ProductPrinter::ConfigE> strawGasStepPrinter { 
+      	fhicl::Name("strawGasStepPrinter") }; 
       fhicl::Table<ProductPrinter::Config> strawHitFlagPrinter { 
       	fhicl::Name("strawHitFlagPrinter") }; 
       fhicl::Table<ProductPrinter::Config> bkgClusterPrinter { 
@@ -116,6 +123,8 @@ namespace mu2e {
 	fhicl::Name("comboHitPrinter") }; 
       fhicl::Table<ProductPrinter::Config> timeClusterPrinter { 
 	fhicl::Name("timeClusterPrinter") }; 
+      fhicl::Table<ProductPrinter::Config> helixSeedPrinter { 
+	fhicl::Name("helixSeedPrinter") }; 
       fhicl::Table<ProductPrinter::Config> kalSeedPrinter { 
 	fhicl::Name("kalSeedPrinter") }; 
       fhicl::Table<ProductPrinter::Config> physicalVolumePrinter { 
@@ -162,11 +171,13 @@ mu2e::PrintModule::PrintModule(const Parameters& conf):
   _printers.push_back( make_unique<CaloClusterPrinter>( conf().caloClusterPrinter() ) );
   _printers.push_back( make_unique<CrvDigiPrinter>( conf().crvDigiPrinter() ) );
   _printers.push_back( make_unique<CrvDigiMCPrinter>( conf().crvDigiMCPrinter() ) );
+  _printers.push_back( make_unique<CrvPhotonsPrinter>( conf().crvPhotonsPrinter() ) );
   _printers.push_back( make_unique<CrvRecoPulsePrinter>( conf().crvRecoPulsePrinter() ) );
   _printers.push_back( make_unique<CrvCoincidenceClusterPrinter>( conf().crvCoincidenceClusterPrinter() ) );
   _printers.push_back( make_unique<StrawDigiPrinter>( conf().strawDigiPrinter() ) );
   _printers.push_back( make_unique<StrawDigiMCPrinter>( conf().strawDigiMCPrinter() ) );
   _printers.push_back( make_unique<StrawHitPrinter>( conf().strawHitPrinter() ) );
+  _printers.push_back( make_unique<StrawGasStepPrinter>( conf().strawGasStepPrinter() ) );
   _printers.push_back( make_unique<StrawHitFlagPrinter>( conf().strawHitFlagPrinter() ) );
 
   _printers.push_back( make_unique<BkgClusterPrinter>( conf().bkgClusterPrinter() ) );
@@ -178,6 +189,7 @@ mu2e::PrintModule::PrintModule(const Parameters& conf):
   _printers.push_back( make_unique<SimParticleTimeMapPrinter>( conf().simParticleTimeMapPrinter() ) );
   _printers.push_back( make_unique<ComboHitPrinter>( conf().comboHitPrinter() ) );
   _printers.push_back( make_unique<TimeClusterPrinter>( conf().timeClusterPrinter() ) );
+  _printers.push_back( make_unique<HelixSeedPrinter>( conf().helixSeedPrinter() ) );
   _printers.push_back( make_unique<KalSeedPrinter>( conf().kalSeedPrinter() ) );
   _printers.push_back( make_unique<PhysicalVolumePrinter>( conf().physicalVolumePrinter() ) );
   _printers.push_back( make_unique<TriggerResultsPrinter>( conf().triggerResultsPrinter() ) );

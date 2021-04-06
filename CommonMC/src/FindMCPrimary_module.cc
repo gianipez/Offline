@@ -120,10 +120,11 @@ namespace mu2e {
       // virtual photon from these
       if(pgps.size() == 2 && pgps[0]->generatorId() == pgps[1]->generatorId() &&
 	  (pgps[0]->generatorId() == GenId::InternalRPC ||
-	   pgps[0]->generatorId() == GenId::InternalRMC ) ) {
+	   pgps[0]->generatorId() == GenId::InternalRMC ||
+	   pgps[0]->generatorId() == GenId::gammaPairProduction) ) {
 	// double -check consistency
 	if(fabs(pgps[0]->time() - pgps[1]->time()) > 1e-6)
-	  throw cet::exception("Simulation")<<"FindMCPrimary: RMC/RPC origins don't match" << std::endl;
+	  throw cet::exception("Simulation")<<"FindMCPrimary: RMC/RPC/gammaPairProduction origins don't match" << std::endl;
 	// Add the 4vectors of the 2 consistuent electrons
 	HepLorentzVector momsum = pgps[0]->momentum() + pgps[1]->momentum();
 	// update the primary; particle type is (offshell) photon

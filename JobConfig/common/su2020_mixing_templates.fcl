@@ -222,6 +222,13 @@ Primary: {
     filters : {
 	g4status: { @table::g4status } 
 
+	# filter gen particle by mom -- default is no filtering
+	genFilter : { module_type : GenParticleMomFilter
+	    genParticleModule : generate
+	    MomentumCutoff : -1
+	    CutoffGenId : @local::GEN_ID
+	}
+
 	# digi filtering for Primary selection.
 	StrawDigiMCFilter : { @table::StrawDigiMCFilter }              # Filters/fcl/prolog.fcl
 
@@ -245,7 +252,7 @@ Primary: {
     EndPath  : [ genCountLogger, digiCompressionCheck, Output ]
 }
 
-Primary.GenAndG4    : [ generate, genCounter, g4run, g4status ]
+Primary.GenAndG4    : [ generate, genCounter, genFilter, g4run, g4status ]
 
 # must define this outside the brackets due to internal dependence
 Primary.TriggerPath : [ @sequence::Primary.GenAndG4,
@@ -321,7 +328,8 @@ CRVCut : { module_type : CompressStepPointMCs
 #------------------------------------------------------------------------------
 Mixing : {
     # input time maps from cut mix inputs.  All are needed
-    protonTimeMaps : [ "flashMixerTrkCal:protonTimeMap" ] # [, "PSMixerCRV:protonTimeMap", "DSMixerCRV:protonTimeMap"]
+    protonTimeMaps    : [ "flashMixerTrkCal:protonTimeMap" ]                       # maps for non-CRV mixing
+    protonTimeMapsCRV : [ "PSMixerCRV:protonTimeMap", "DSMixerCRV:protonTimeMap"]  # maps for CRV mixing
 
     # cosmic time maps from primary generation
     cosmicTimeMaps : ["cosmicTimeMapPrimary"]
@@ -352,9 +360,11 @@ Mixing : {
 
     # sequences
 
-    CRVMixSequence        : [ PSMixerCRV, TSMixerCRV, DSMixerCRV,
-			      ootMixerCRV, neutronMixerCRV, dioMixerCRV, photonMixerCRV 
-			     ]
+#    CRVMixSequence        : [ PSMixerCRV, TSMixerCRV, DSMixerCRV,
+#			      ootMixerCRV, neutronMixerCRV, dioMixerCRV, photonMixerCRV 
+#			     ]
+
+    CRVMixSequence        : [ PSMixerCRV, DSMixerCRV, neutronMixerCRV, dioMixerCRV ]
 }
 
 Mixing : { @table::Mixing
@@ -408,12 +418,12 @@ Mixing : { @table::Mixing
 	deuteronMixerTrkCal : { @table::mixerTemplateTrkCal mu2e: { @table::mixerTemplateTrkCal.mu2e label:deuteronMixerTrkCal}}
 
 	# CRV mixing
+	dioMixerCRV	    : { @table::mixerTemplateCRV    mu2e: { @table::mixerTemplateCRV.mu2e    label:dioMixerCRV     }}
+	neutronMixerCRV     : { @table::mixerTemplateCRV    mu2e: { @table::mixerTemplateCRV.mu2e    label:neutronMixerCRV }}
+	DSMixerCRV	    : { @table::mixerTemplateCRV    mu2e: { @table::mixerTemplateCRV.mu2e    label:DSMixerCRV      }}
 	PSMixerCRV	    : { @table::mixerTemplateCRV    mu2e: { @table::mixerTemplateCRV.mu2e    label:PSMixerCRV      }}
 	TSMixerCRV	    : { @table::mixerTemplateCRV    mu2e: { @table::mixerTemplateCRV.mu2e    label:TSMixerCRV      }}
-	DSMixerCRV	    : { @table::mixerTemplateCRV    mu2e: { @table::mixerTemplateCRV.mu2e    label:DSMixerCRV      }}
 	ootMixerCRV	    : { @table::mixerTemplateCRV    mu2e: { @table::mixerTemplateCRV.mu2e    label:ootMixerCRV     }}
-	neutronMixerCRV     : { @table::mixerTemplateCRV    mu2e: { @table::mixerTemplateCRV.mu2e    label:neutronMixerCRV }}
-	dioMixerCRV	    : { @table::mixerTemplateCRV    mu2e: { @table::mixerTemplateCRV.mu2e    label:dioMixerCRV     }}
 	photonMixerCRV      : { @table::mixerTemplateCRV    mu2e: { @table::mixerTemplateCRV.mu2e    label:photonMixerCRV  }}
 
 	# digi filtering for Primary selection.
@@ -422,7 +432,7 @@ Mixing : { @table::Mixing
 	}
 
 	CaloShowerSimFilter : { module_type :CaloShowerSimFilter
-	    particleTypes     : [ 22, 11, -11, 13, -13, 2212, -2212  ] # save photons, electrons, muons, and protons
+	    particleTypes           : [ 22, 11, -11, 13, -13, 2212, -2212  ] # save photons, electrons, muons, and protons
 	    MinParticleEnergy       : 40.0 # MeV
 	    MinTotalEnergy          : 100000.0 # disable, is an OR with MinParticleEnergy
 	    CaloShowerSimCollection : "CaloShowerStepROFromShowerStepPrimary"
@@ -458,6 +468,7 @@ Mixing.CreatePrimarySequence : [ @sequence::Primary.GenAndG4        ,
 				 makeSGSPrimary, makeSDPrimary      , 
 				 StrawDigiMCFilter                           # for sig+mbs, filter on makeSDPrimary
 				]
+
 Mixing.CreatePrimarySequence_calo : [ @sequence::Primary.GenAndG4,
 				      @sequence::CommonMC.PrimaryDigiSim,
 				      makeSGSPrimary, makeSDPrimary, 
@@ -466,35 +477,56 @@ Mixing.CreatePrimarySequence_calo : [ @sequence::Primary.GenAndG4,
 				     ]
 
 Mixing.pbi_mix             : [ protonBunchIntensity               , 
-			       EWMProducer                        , 
+			       EWMProducer                        ,
 			       @sequence::Mixing.TrkCalMixSequence 
 			      ]
 
-Mixing.pbi_mix_digi_nocrv  : [ protonBunchIntensity               ,
-			       EWMProducer                        , 
-			       @sequence::Mixing.TrkCalMixSequence,
-			       @sequence::CommonMC.DigiSim        ,
-			       @sequence::TrackerMC.DigiSim       ,
-			       @sequence::CaloDigiMC.DigiSim
-			      ]			
+Mixing.pbi_mix_crv         : [ protonBunchIntensity               , 
+			       EWMProducer                        ,
+			       @sequence::Mixing.CRVMixSequence 
+			      ]
 
-Mixing.pbi_digi_nocrv      : [ protonBunchIntensity               ,
-			       EWMProducer                        , 
-			       # @sequence::CommonMC.DigiSim        ,  # [ @sequence::CommonMC.TimeMaps, EWMProducer ]
+Mixing.pbi_mix_digi_nocrv  : [ protonBunchIntensity               ,
+			       EWMProducer                        ,
+			       @sequence::Mixing.TrkCalMixSequence,
 			       @sequence::CommonMC.TimeMaps       ,
 			       @sequence::TrackerMC.DigiSim       ,
 			       @sequence::CaloDigiMC.DigiSim
-			      ]			
+			      ]
+
+Mixing.pbi_mix_digi_crv    : [ protonBunchIntensity               ,
+			       EWMProducer                        ,
+			       @sequence::Mixing.CRVMixSequence   ,
+			       @sequence::CommonMC.TimeMaps       ,
+			       @sequence::TrackerMC.DigiSim       ,
+			       @sequence::CaloDigiMC.DigiSim      ,
+			       @sequence::CrvDAQPackage.CrvResponseSequence 
+			      ]
+
+Mixing.pbi_digi_crv        : [ protonBunchIntensity               ,
+			       EWMProducer                        , 
+			       @sequence::CommonMC.TimeMaps       ,
+			       @sequence::CrvDAQPackage.CrvResponseSequence 
+			      ]
+
+Mixing.pbi_digi_nocrv      : [ protonBunchIntensity               ,
+			       EWMProducer                        , 
+			       @sequence::CommonMC.TimeMaps       ,
+			       @sequence::TrackerMC.DigiSim       ,
+			       @sequence::CaloDigiMC.DigiSim
+			      ]
 
 Mixing.pbi_mix_digi_all    : [ protonBunchIntensity               ,
 			       EWMProducer                        , 
 			       @sequence::Mixing.TrkCalMixSequence,
-			       @sequence::Mixing.CRVMixSequence,
-			       @sequence::CommonMC.DigiSim,
-			       @sequence::TrackerMC.DigiSim,
-			       @sequence::CaloDigiMC.DigiSim,
+			       @sequence::Mixing.CRVMixSequence   ,
+			       # -----
+			       @sequence::CommonMC.TimeMaps       ,
+			       # -----
+			       @sequence::TrackerMC.DigiSim       ,
+			       @sequence::CaloDigiMC.DigiSim      ,
 			       @sequence::CrvDAQPackage.CrvResponseSequence 
-			      ]			
+			      ]
 #------------------------------------------------------------------------------
 # mixing_001: generate signal particle, add background mixing with CRV, compress
 # mixing_002: generate signal particle, add background mixing , no CRV, compress
@@ -514,7 +546,6 @@ Mixing.signal_nocrv         : [ # -- @sequence::Mixing.CreatePrimarySequence,
 			        # -- 
 				# --- @sequence::Mixing.pbi_digi_nocrv       ,
 				protonBunchIntensity               ,
-				# -- @sequence::CommonMC.DigiSim        ,   # [ @sequence::CommonMC.TimeMaps, EWMProducer ]
 				EWMProducer                        , 
 				@sequence::CommonMC.TimeMaps       ,
 				# --
@@ -528,12 +559,17 @@ Mixing.signal_minbias_nocrv : [ @sequence::Mixing.CreatePrimarySequence,
 				@sequence::Mixing.pbi_mix_digi_nocrv  ,
 				compressDigiMCs 
 			       ]
+
 Mixing.signal_minbias_nocrv_calo : [ @sequence::Mixing.CreatePrimarySequence_calo,
 				     @sequence::Mixing.pbi_mix_digi_nocrv  ,
 				     compressDigiMCs 
 				    ]
 
 Mixing.minbias_nocrv        : [ @sequence::Mixing.pbi_mix_digi_nocrv  ,
+				compressDigiMCs 
+			       ]
+
+Mixing.minbias_crv          : [ @sequence::Mixing.pbi_mix_digi_crv  ,
 				compressDigiMCs 
 			       ]
 #------------------------------------------------------------------------------------------------------
@@ -551,15 +587,21 @@ Mixing.filters.dioMixerTrkCal.mu2e.meanEventsPerProton      :   4.178e-6  # 3.84
 Mixing.filters.photonMixerTrkCal.mu2e.meanEventsPerProton   :   8.231e-6  # 8.6966E-06 # -289 # -6 # -1 
 Mixing.filters.protonMixerTrkCal.mu2e.meanEventsPerProton   :   6.594e-7  # 7.4322E-07 #  -24 # -7 # -1 
 Mixing.filters.deuteronMixerTrkCal.mu2e.meanEventsPerProton :   2.547e-7  # 1.6261E-07 #  -10 # -8 # -1 
-#------------------------------------------------------------------------------
-# CRV mixing - not validated for SU2020, not used
-#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------
+# CRV mixing                                                :   SU2020    | MDC2018    # debug
+#
+# SU2020 DS and PS input streams have been generated with the timing cut-off T>200ns
+# what are the MDC2018 definitions of "cut" and "uncut" ?
+#------------------------------------------------------------------------------------------------------
+Mixing.filters.dioMixerCRV.mu2e.meanEventsPerProton         :   6.704e-7  # 3.2816E-07 # -1   # 
+Mixing.filters.neutronMixerCRV.mu2e.meanEventsPerProton     :   6.844e-6  # 3.6173E-06 # -1   # 
+Mixing.filters.DSMixerCRV.mu2e.meanEventsPerProton	    :   7.062e-5  # 1.4588E-06 # -1   # 
+Mixing.filters.PSMixerCRV.mu2e.meanEventsPerProton	    :   1.562e-4  # 4.2425E-05 # -1   # 
+
 # Mixing.filters.ootMixerCRV.mu2e.meanEventsPerProton	    : 4.5379E-06
-# Mixing.filters.neutronMixerCRV.mu2e.meanEventsPerProton  : 3.6173E-06
-# Mixing.filters.dioMixerCRV.mu2e.meanEventsPerProton      : 3.2816E-07
 # Mixing.filters.photonMixerCRV.mu2e.meanEventsPerProton   : 1.3449E-07
-#  Mixing.filters.PSMixerCRV.mu2e.meanEventsPerProton        : 9.5035E-05     # uncut
+# Mixing.filters.PSMixerCRV.mu2e.meanEventsPerProton          : 9.5035E-05     # uncut
 # Mixing.filters.PSMixerCRV.mu2e.meanEventsPerProton	    : 4.2425E-05     # cut 
 # Mixing.filters.TSMixerCRV.mu2e.meanEventsPerProton	    : 2.4368E-06
-#  Mixing.filters.DSMixerCRV.mu2e.meanEventsPerProton        : 2.8126E-04     # uncut
+# Mixing.filters.DSMixerCRV.mu2e.meanEventsPerProton          : 2.8126E-04     # uncut
 # physics.filters.DSMixerCRV.mu2e.meanEventsPerProton	    : 1.4588E-06     # cut

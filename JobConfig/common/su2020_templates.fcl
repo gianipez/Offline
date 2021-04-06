@@ -34,9 +34,9 @@ services.scheduler.wantSummary        : true
 services.TFileService.fileName        : "nts._USER_._DATASET_._DSCONF_.sequencer.root" 
 
 # Limit the amount of "Begin processing the ... record" messages
-mu2e.services.simServices.message.destinations.log.categories.ArtReport.reportEvery: 1
-mu2e.services.simServices.message.destinations.log.categories.ArtReport.limit: 1
-mu2e.services.simServices.message.destinations.log.categories.ArtReport.timespan: 300
+services.message.destinations.log.categories.ArtReport.reportEvery : 1
+services.message.destinations.log.categories.ArtReport.limit       : 10000
+services.message.destinations.log.categories.ArtReport.timespan    : 300
 #------------------------------------------------------------------------------
 # (2): definition of the input module - can redefine in the top-level prolog
 #------------------------------------------------------------------------------
@@ -89,6 +89,8 @@ su2020 : {
 	    mean      : 0.0 # No PBI possible for pure signal! 
 	    halfWidth : 1.0
 	}
+
+	SeparateCaloShowerSteps : { @table::SeparateCaloShowerSteps } # defined in Filters
 #------------------------------------------------------------------------------
 # reco producers, compressDigiMCs defined there 
 #------------------------------------------------------------------------------
@@ -105,6 +107,10 @@ su2020 : {
 	TrkQualDmuMHPar : { @table::TrkQualDmuM KalSeedCollection: "KFFDmuMHPar" }
 	TrkQualDmuMHDar : { @table::TrkQualDmuM KalSeedCollection: "KFFDmuMHDar" }
 
+	TrkQualUeMHPar  : { @table::TrkQualUeM  KalSeedCollection: "KFFUeMHPar"  }
+	TrkQualUeMHDar  : { @table::TrkQualUeM  KalSeedCollection: "KFFUeMHDar"  }
+	TrkQualUmuMHPar : { @table::TrkQualUmuM KalSeedCollection: "KFFUmuMHPar" }
+	TrkQualUmuMHDar : { @table::TrkQualUmuM KalSeedCollection: "KFFUmuMHDar" }
 #------------------------------------------------------------------------------
 # helix mergers: each combines all found helices with the same direction and mass 
 # into one collection
@@ -157,9 +163,15 @@ su2020 : {
 
 	detectorFilter : { module_type: FilterG4Out
 	    mainHitInputs   : [ "g4run:tracker" ]
-	    mainSPPtrInputs : []
+	    mainSPPtrInputs : [ ]
 	    extraHitInputs  : [ "g4run:virtualdetector", "g4run:protonabsorber" ]
-	    vetoDaughters   : []
+	    vetoDaughters   : [ ]
+	}
+
+	crvFilter: { module_type: FilterG4Out
+	    mainHitInputs : [ "g4run:CRV" ]
+	    extraHitInputs: [ "g4run:virtualdetector" ]
+	    vetoParticles : [ ]
 	}
 
 	filterStepPointMomentum : { @table::FilterStepPointMomentum
@@ -190,29 +202,32 @@ su2020 : {
 # output event formats
 # 1. event format for mixing input
 #------------------------------------------------------------------------------
-su2020.gen_sim_output       : [ "drop    *_*_*_*",
-				"keep    mu2e::GenEventCount_*_*_*",
-				"keep    *_g4run_*_*",
-				"drop    mu2e::StepPointMCs_g4run_calorimeter_*",
+su2020.gen_sim_output       : [ "drop    *_*_*_*"                                 ,
+				"keep    mu2e::EventWeight_*_*_*"                 ,
+				"keep    mu2e::EventWindowMarker_EWMProducer_*_*" ,
+				"keep    mu2e::FixedTimeMap_*_*_*"                ,
+				"keep    mu2e::GenEventCount_*_*_*"               ,
+				"keep    mu2e::GenParticles_*_*_*"                ,
+				"keep    *_g4run_*_*"                             ,
+				"drop    mu2e::StepPointMCs_g4run_calorimeter_*"  ,
 				"drop    mu2e::StepPointMCs_g4run_calorimeterRO_*",
-				"keep    mu2e::CaloShowerSteps_*_*_*",
-				"keep    mu2e::GenParticles_*_*_*"
+				"keep    mu2e::CaloShowerSteps_*_*_*"
 			       ]
 #------------------------------------------------------------------------------
 # 2. output format for digi files
 #------------------------------------------------------------------------------
-su2020.gen_sim_digi_output  : [ "drop    *_*_*_*",
-				"keep    *_compressDigiMCs_*_*",
-				"keep    mu2e::GenEventCount_*_*_*",
-				"keep mu2e::GenParticles_generate_photon_*",
-				"keep    mu2e::StatusG4_g4run_*_*",
-				"keep    mu2e::EventWeight_*_*_*",
+su2020.gen_sim_digi_output  : [ "drop    *_*_*_*"                                ,
+				"keep    *_compressDigiMCs_*_*"                  ,
+				"keep    mu2e::GenEventCount_*_*_*"              ,
+				"keep    mu2e::GenParticles_generate_photon_*"   ,
+				"keep    mu2e::StatusG4_g4run_*_*"               ,
+				"keep    mu2e::EventWeight_*_*_*"                ,
 				"keep    mu2e::EventWindowMarker_EWMProducer_*_*",
-				"keep    mu2e::FixedTimeMap_*_*_*",
-				"keep    mu2e::CaloDigis_CaloDigiFromShower_*_*",
-				"keep    mu2e::CrvDigis_CrvDigi_*_*",
-				"keep    mu2e::ProtonBunchIntensity_*_*_*",
-				"keep    mu2e::StrawDigis_makeSD_*_*",
+				"keep    mu2e::FixedTimeMap_*_*_*"               ,
+				"keep    mu2e::CaloDigis_CaloDigiFromShower_*_*" ,
+				"keep    mu2e::CrvDigis_CrvDigi_*_*"             ,
+				"keep    mu2e::ProtonBunchIntensity_*_*_*"       ,
+				"keep    mu2e::StrawDigis_makeSD_*_*"            ,
 				"keep    art::TriggerResults_TriggerResults_*_*"
 			       ]
 #------------------------------------------------------------------------------
@@ -220,6 +235,9 @@ su2020.gen_sim_digi_output  : [ "drop    *_*_*_*",
 #------------------------------------------------------------------------------
 su2020.mixing_output : [ "drop *_*_*_*"                               ,
 			 "keep *_compressDigiMCs_*_*"                 ,
+			 "keep mu2e::GenEventCount_*_*_*"             ,
+			 "keep mu2e::GenParticles_generate_photon_*"  ,
+			 "keep mu2e::EventWeight_*_*_*"               ,
 			 "keep mu2e::EventWindowMarker_*_*_*"         ,
 			 "keep mu2e::ProtonBunchIntensity_*_*_*"      ,
 			 "keep mu2e::StrawDigis_*_*_*"                ,
@@ -231,11 +249,8 @@ su2020.mixing_output : [ "drop *_*_*_*"                               ,
 su2020.outputs: {
     defaultOutput : { module_type : RootOutput
 	SelectEvents  : [ @sequence::TRIGGER_PATHS ]
-	outputCommands: [ "keep *_*_*_*" 
-			  # (example)		      , "drop uintmu2e::PhysicalVolumeInfomvstd::pairs_g4run_*_*"
-			 ]
+	outputCommands: [ "keep *_*_*_*" ]
     }
-    
     FullOutput : { @table::Mixing.Output  outputCommands : [ "keep *_*_*_*"                  ] }
     DetOutput  : { @table::Mixing.Output  outputCommands : [ @sequence::su2020.mixing_output ] }
 }
@@ -247,29 +262,27 @@ su2020.gen_g4              : [ generate, genCounter, g4run, g4status ]
 
 su2020.gen_g4_pbi          : [ generate, genCounter, g4run, protonBunchIntensity ]
 
+su2020.gen_g4_pbi_detFilter: [ generate, genCounter, g4run, protonBunchIntensity, filterStepPointMomentum ]
+
 su2020.pbi_ewm             : [ protonBunchIntensity, EWMProducer ]
-
-su2020.gen_g4_detFilter    : [ generate, genCounter, g4run, protonBunchIntensity, filterStepPointMomentum ]
-
-# su2020.gen_g4_pbi_time_map : [ @sequence::su2020.gen_g4_pbi, @sequence::CommonMC.DigiSim ]
 
 su2020.digis               : [ @sequence::TrackerMC.DigiSim, StrawDigiMCFilter, 
 			       @sequence::CaloDigiMC.DigiSim, 
-			       @sequence::CrvDAQPackage.CrvDAQSequence, 
-			       compressDigiMCs 
+			       @sequence::CrvDAQPackage.CrvDAQSequence 
+			       # compressDigiMCs 
 			      ]
 
 su2020.digis_no_filter     : [ @sequence::TrackerMC.DigiSim, 
 			       # StrawDigiMCFilter, 
 			       @sequence::CaloDigiMC.DigiSim, 
-			       @sequence::CrvDAQPackage.CrvDAQSequence, 
-			       compressDigiMCs 
+			       @sequence::CrvDAQPackage.CrvDAQSequence
+			       # compressDigiMCs 
 			      ]
 
 su2020.digisCaloFilter     : [ @sequence::CaloDigiMC.DigiSim, CaloShowerSimFilter,
 			       @sequence::TrackerMC.DigiSim, 
-			       @sequence::CrvDAQPackage.CrvDAQSequence, 
-			       compressDigiMCs 
+			       @sequence::CrvDAQPackage.CrvDAQSequence 
+			       # compressDigiMCs 
 			      ]
 
 # calorimeter reconstruction
@@ -294,6 +307,12 @@ su2020.helix_reco_de : [
 			MHFinderDe                                              # helix merging
 		       ]
 
+# upstream e+/e- helix reconstruction
+su2020.helix_reco_ue : [
+			TimeClusterFinderUe, HelixFinderUe,                     # TrkPatRec-only
+			MHFinderUe                                              # helix merging
+		       ]
+
 # downstream electron reconstruction: e- and e+ combined
 su2020.trk_reco_de  : [
 		       TimeClusterFinderDe, HelixFinderDe,                     # TrkPatRec
@@ -301,6 +320,14 @@ su2020.trk_reco_de  : [
 		       MHFinderDe,                                             # helix merging
 		       KSFDeMH,                                                # Seed fit (chisquared, no drift)
 		       KFFDeMHPar, KFFDeMHDar                                  # final Kalman filter fit with the Panel-based AR
+		      ]
+
+su2020.trk_reco_de_dar : [
+		       TimeClusterFinderDe, HelixFinderDe,                     # TrkPatRec
+		       CalTimePeakFinder, DeltaFinder, CalHelixFinderDe,       # CalPatRec
+		       MHFinderDe,                                             # helix merging
+		       KSFDeMH,                                                # Seed fit (chisquared, no drift)
+		       KFFDeMHDar                                              # final Kalman filter, DAR-only
 		      ]
 
 # downstream muon reconstruction: mu- and mi+ combined
@@ -312,6 +339,14 @@ su2020.trk_reco_dmu : [
 		       KFFDmuMHPar, KFFDmuMHDar                                # final Kalman filter fit with the panel-based AR
 		      ]
 
+su2020.trk_reco_dmu_dar : [
+		       TimeClusterFinderDmu, HelixFinderDmu,                   # TrkPatRec
+		       CalTimePeakFinderMu, DeltaFinderMu, CalHelixFinderDmu,  # CalPatRec
+		       MHFinderDmu,                                            # helix merging
+		       KSFDmuMH,                                               # Seed fit (chisquared, no drift)
+		       KFFDmuMHDar                                             # final Kalman filter fit, DAR-only
+		      ]
+
 # upstream electron reconstruction (e- and e+): standalone-only pattern recognition, 
 # calorimeter-seeded algorithm is designed to deal only with the downstream tracks
 su2020.trk_reco_ue  : [
@@ -319,6 +354,14 @@ su2020.trk_reco_ue  : [
 		       MHFinderUe,                                             # helix merging
 		       KSFUeMH,                                                # Seed fit (chisquared, no drift)
 		       KFFUeMHPar , KFFUeMHDar                                 # final Kalman filter fit
+		      ]
+
+# upstream electron reconstruction, DAR
+su2020.trk_reco_ue_dar : [
+		       TimeClusterFinderUe, HelixFinderUe,                     # TrkPatRec
+		       MHFinderUe,                                             # helix merging
+		       KSFUeMH,                                                # Seed fit (chisquared, no drift)
+		       KFFUeMHDar                                              # final Kalman filter, DAR-only
 		      ]
 
 # upstream muon reconstruction (mu- and mu+): standalone-only pattern recognition, 
@@ -370,33 +413,39 @@ su2020.triggers         : [
 	su2020_p1 : [ @sequence::su2020.gen_g4_pbi,           # includes protonBunchIntensity
 		      GammaFilter,                            # does nothing by default
 		      @sequence::CommonMC.DigiSim      ,      # adds TimeMaps, EWMProducer (name - confusing)
-		      @sequence::su2020.digis          
+		      @sequence::su2020.digis          ,
+		      compressDigiMCs
 		     ]
 
 	# same as su2020_p1, but using a calo filter instead of straw digi filter
 	su2020_p1calo : [ @sequence::su2020.gen_g4_pbi     , 
 			  GammaFilter                      ,  # does nothing by default
 			  @sequence::CommonMC.DigiSim      ,  # TimeMaps, EWMProducer
-			  @sequence::su2020.digisCaloFilter           
+			  @sequence::su2020.digisCaloFilter,
+			  compressDigiMCs
+
 			 ]
 
 	su2020_p10 : [ @sequence::su2020.gen_g4_pbi,          # includes ProtonBunchIntensity
 		       filterStepPointMomentum ,
 		       GammaFilter,                           # does nothing by default
 		       @sequence::CommonMC.DigiSim       ,    # adds TimeMaps, EWMProducer (name - confusing)
-		       @sequence::su2020.digis_no_filter      # no StrawDigiMCFilter, for mixing
+		       @sequence::su2020.digis_no_filter ,    # no StrawDigiMCFilter, for mixing
+		       compressDigiMCs
 		      ]
 
 	su2020_p11 : [ g4run, protonBunchIntensity,           # what's left of @sequence::su2020.gen_g4_time_map,
 		       @sequence::CommonMC.DigiSim, 
-		       GammaFilter,                           # does nothing by default
-		       @sequence::su2020.digis          
+		       GammaFilter                ,           # does nothing by default
+		       @sequence::su2020.digis    ,
+		       compressDigiMCs
 		     ]
 
 	su2020_p111 : [ @sequence::su2020.pbi_ewm   ,          # what's left of @sequence::su2020.gen_g4_time_map,
 			@sequence::CommonMC.TimeMaps, 
 			GammaFilter                 ,          # does nothing by default
-			@sequence::su2020.digis_no_filter          
+			@sequence::su2020.digis_no_filter,
+			compressDigiMCs
 		       ]
 
 	su2020_p12 : [ @sequence::su2020.gen_g4_pbi,          # includes ProtonBunchIntensity
@@ -445,11 +494,13 @@ su2020.triggers         : [
 		      ]
 
 #------------------------------------------------------------------------------
-# p22: read digis, reconstruct helices
+# p22: read digis, reconstruct helices - both directions, 
+#      2021-03-21: currently time clustering is currently not direction-symmetric
 #------------------------------------------------------------------------------
 	su2020_p22 : [ @sequence::su2020.calo_reco,
 		       @sequence::su2020.trk_hit_reco,
-		       @sequence::su2020.helix_reco_de
+		       @sequence::su2020.helix_reco_de,
+		       @sequence::su2020.helix_reco_ue
 		      ]
 
 #------------------------------------------------------------------------------

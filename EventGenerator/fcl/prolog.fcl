@@ -37,9 +37,9 @@ mergedMuon_tgtStops_mdc2018   : @local::mergedMuon_tgtStops_mdc2018_1
 mergedMuon_ootStops_mdc2018   : @local::mergedMuon_ootStops_mdc2018_1
 mergedMuon_ipaStops_mdc2018   : @local::mergedMuon_ipaStops_mdc2018_1
 
-#------------------------------------------------------------------------------
-# SU2020 stoped particle ntuples: mu-(tgt,oot) , pi-(tgt,oot), pbar
-#------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------
+# SU2020 stoped particle ntuples: mu-(tgt,oot) , pi-(tgt,oot), pbar, delayed pions from pbar
+#---------------------------------------------------------------------------------------------
 bmum0_tgtStops_su2020_1       : [ "xroot://fndca1.fnal.gov/pnfs/fnal.gov/usr/mu2e/resilient/users/mu2epro/su2020/stops/nts.mu2e.su2020.bmum0s31b0.001000_10000000.root" ]
 bmum0_ootStops_su2020_1       : [ "xroot://fndca1.fnal.gov/pnfs/fnal.gov/usr/mu2e/resilient/users/mu2epro/su2020/stops/nts.mu2e.su2020.bmum0s32b0.001000_10000000.root" ]
 
@@ -47,6 +47,9 @@ bpim0_tgtStops_su2020_1       : [ "xroot://fndca1.fnal.gov/pnfs/fnal.gov/usr/mu2
 bpim0_ootStops_su2020_1       : [ "xroot://fndca1.fnal.gov/pnfs/fnal.gov/usr/mu2e/resilient/users/mu2epro/su2020/stops/nts.mu2e.su2020.bpim0s32b0.001000_10000000.root" ]
 
 pbar0_tgtStops_su2020_1       : [ "xroot://fndca1.fnal.gov/pnfs/fnal.gov/usr/mu2e/resilient/users/defelice/su2020/stops/nts.mu2e.pbar0s41b0.su2020.001000_00000000.root" ]
+pbar0_tgtStops_su2020_2       : [ "xroot://fndca1.fnal.gov/pnfs/fnal.gov/usr/mu2e/resilient/users/mu2epro/su2020/stops/nts.mu2e.pbar0s41b0.su2020.001000_00000000.root" ]
+
+rpce2_tgtStops_su2020_1       : [ "xroot://fndca1.fnal.gov/pnfs/fnal.gov/usr/mu2e/resilient/users/mu2epro/su2020/stops/nts.mu2e.rpce2s31b0.su2020.001000_00000000.root" ]
 
 # CD3 stopped muon configs.
 mu2e.tgtMuonStops: {
@@ -138,6 +141,19 @@ PrimaryProtonGun: { module_type : PrimaryProtonGun
     mean	      : -1.
 
 }
+PrimaryAntiProtonGun: { 
+    module_type : PrimaryAntiProtonGun
+    verbosityLevel    : 0
+    czmin	      : -1.
+    czmax	      : -1.
+    phimin	      : -3.1415
+    phimax	      : 3.1415
+    pLowFlat          : 0.
+    pHighFlat         : 9.
+    doHistograms      : true
+    inputModuleLabel  : "g4run"
+    weightmode        : 1
+}
 
 StoppedParticleReactionGun: { @table::CeEndpointGun
     physics:  { @table::CeEndpointGun.physics
@@ -192,6 +208,17 @@ EventGenerator : {
 	verbosityLevel        : 0
 	inputFiles            : [ @sequence::pbar0_tgtStops_su2020_1 ]
     }
+
+
+# SU2020 (delayed) stopped pions from antiproton config.
+    pbarPionStops: {
+	treeName              : "stoppedAntipDumper/stops"
+	branchName            : "stops"
+	averageNumRecordsToUse: 500000
+	verbosityLevel        : 0
+	inputFiles            : [ @sequence::rpce2_tgtStops_su2020_1 ]
+    }
+
 }
 
 EventGenerator : { @table::EventGenerator 
@@ -256,7 +283,7 @@ EventGenerator : { @table::EventGenerator
 #------------------------------------------------------------------------------
 # generic electron and muon guns, default momentum is that of the CE on Al
 #------------------------------------------------------------------------------
-  	egun : { @table::CeEndpointGun 
+  	egun : { @table::StoppedParticleReactionGun
 	    physics : { @table::StoppedParticleReactionGun.physics
 		pdgId            : 11
 		elow             : 104.97175
@@ -269,8 +296,9 @@ EventGenerator : { @table::EventGenerator
 #------------------------------------------------------------------------------
 # hypothetic generator option - muons coming out of the stopping target
 #------------------------------------------------------------------------------
-  	mgun : { @table::CeEndpointGun 
+  	mgun : { @table::StoppedParticleReactionGun
 	    physics : { @table::StoppedParticleReactionGun.physics
+		genId            : StoppedParticleReactionGun
 		pdgId            : 13
 		elow             : 104.97175
 		ehi              : 104.97176
@@ -387,6 +415,26 @@ EventGenerator : { @table::EventGenerator
 		spectrumShape    : "flat"
 	    }
 	    pbarStops            : {  @table::EventGenerator.pbarStops}
+	}
+
+	PbarRPCGun : { module_type       : RPCGun
+	    verbosityLevel    : 0
+	    doHistograms      : false
+	    tmin              : -1.
+	    czmin             : -1.
+	    czmax             :  1.
+	    phimin            :  0.
+	    phimax            : 10.
+	    randPDFparameters : {}
+	    physics : {
+		genId                 : @local::GEN_ID  # InternalRPC or ExternalRPC, defines the generated process
+		generateIntConversion : 0               # 0:photons 1: e+e- internal conversion pairs 
+		spectrumShape         : "Bistirlich"    # could also be "flat"
+		elow                  : 1.5
+		ehi                   : 140.1
+		spectrumResolution    : 0.1             # hopefully, in MeV
+	    }
+	    pionStops                 : { @table::EventGenerator.pbarPionStops }
 	}
 
 	RPCGun : { module_type       : RPCGun

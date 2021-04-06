@@ -47,6 +47,8 @@ namespace mu2e {
     double timeWithOffsetsApplied(const StepPointMC& s) const;
     double timeWithOffsetsApplied(const StrawGasStep& s) const;
 
+    void   print(const char* Option = "") const;
+
   private:
     std::vector<art::InputTag> inputs_;
 

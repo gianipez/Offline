@@ -1,3 +1,4 @@
+# -*- mode: tcl -*- 
 // Re-sample particles entering from the PS (dsregion stream), propagate them, and write out tracker, CRV hits
 // and compressed  calorimeter showers.
 //
@@ -22,7 +23,7 @@ physics.out: [ detectorOutput ]
 physics.producers.genCounter: {module_type: GenEventCounter }
 
 // Bring in info from the previous stage
-physics.filters.flashResample: {
+physics.filters.resamplingMixer: {
    module_type: ResamplingMixer
    fileNames: @nil
    readMode: "sequential"
@@ -42,12 +43,12 @@ physics.filters.flashResample: {
 // Point Mu2eG4 to the pre-simulated data
 physics.producers.g4run.MultiStageParameters: {
    simParticleNumberOffset: 100000
-   genInputHits:  [ "flashResample:dsregion" ]
-   inputSimParticles: "flashResample"
+   genInputHits:  [ "resamplingMixer:dsregion" ]
+   inputSimParticles: "resamplingMixer"
    inputMCTrajectories: ""
    inputPhysVolumeMultiInfo: "" # earlier info dropped
 }
-physics.producers.g4run.SDConfig.preSimulatedHits:  ["flashResample:virtualdetector"]
+physics.producers.g4run.SDConfig.preSimulatedHits:  ["resamplingMixer:virtualdetector"]
 
 //----------------------------------------------------------------
 physics.filters.flashPrefilter: {
@@ -84,8 +85,8 @@ physics.filters.detectorFilter: {
    ]
 }
 
-// Add genCounter and flashResample to the trigger path.
-physics.detPath: [ "genCounter", "flashResample", 
+// Add genCounter and resamplingMixer to the trigger path.
+physics.detPath: [ "genCounter", "resamplingMixer", 
    //need to remove compressPVDetector//  @sequence::physics.detPath
    "g4run",
    "g4consistent",
@@ -104,4 +105,4 @@ services.GeometryService.simulatedDetector.tool_type : "Mu2e"
 services.GeometryService.inputFile : "Mu2eG4/geom/geom_common_phase1.txt"
 
 // Test:
-// physics.filters.flashResample.fileNames: [ "/pnfs/mu2e/tape/phy-sim/sim/mu2e/beam-g4s1-dsregion/g4-10-5/art/91/b1/sim.mu2e.beam-g4s1-dsregion.g4-10-5.002701_00002991.art" ]
+// physics.filters.resamplingMixer.fileNames: [ "/pnfs/mu2e/tape/phy-sim/sim/mu2e/beam-g4s1-dsregion/g4-10-5/art/91/b1/sim.mu2e.beam-g4s1-dsregion.g4-10-5.002701_00002991.art" ]

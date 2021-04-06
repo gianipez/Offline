@@ -68,6 +68,9 @@ physics :{
       crvRecoPulsePrinter : {
         verbose: 1
       }
+      crvPhotonsPrinter : {
+        verbose: 0
+      }
       crvCoincidenceClusterPrinter : {
         verbose: 1
       }
@@ -78,6 +81,11 @@ physics :{
       strawDigiMCPrinter : {
         verbose: 0
       }
+
+      strawGasStepPrinter : {
+        verbose: 0
+      }
+
       strawHitPrinter : {
         verbose: 0
       }
@@ -112,6 +120,9 @@ physics :{
       }
       kalSeedPrinter : {
         verbose: 3
+      }
+      helixSeedPrinter : {
+        verbose: 1
       }
 
       physicalVolumePrinter : {

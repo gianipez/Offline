@@ -34,6 +34,7 @@ namespace mu2e {
     private:
       bool beginRun(art::Run& run) override;
       bool endRun(art::Run& run) override;
+      bool endSubRun(art::SubRun& sr) override;
       bool filter(art::Event& event) override;
       
       art::InputTag _genParticleModule;
@@ -57,14 +58,25 @@ namespace mu2e {
   bool GenParticleMomFilter::endRun(art::Run& run) {
     return true;
   }
+  bool GenParticleMomFilter::endSubRun(art::SubRun& sr) {
+    if(_momCutoff <= 0.) return true; //Don't print summary if unused
+
+    mf::LogInfo("INFO") << "GenEvents seen: "
+			<< _nevt << ", GenEvents passed: " 
+			<< _npass << " for " << sr.id()
+			<< "\n";
+    return true;
+
+  }
 
   bool GenParticleMomFilter::filter(art::Event& event) {
     ++_nevt;
+    double mom = 0;
+    if(mom >= _momCutoff) {++_npass; return true;} //no filtering
 
     auto genColl = event.getValidHandle<GenParticleCollection>( _genParticleModule);
 
     // find highest momentum gen particle that passes cuts
-    double mom = 0;
     for ( const auto& i: *genColl ) {
       if ((i.pdgId() == _cutoffPDG || _cutoffPDG == PDGCode::null) && i.generatorId() == _cutoffGenId) {
         if (i.momentum().vect().mag() > mom)

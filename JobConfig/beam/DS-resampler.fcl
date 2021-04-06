@@ -20,7 +20,7 @@ physics.out: [ detectorOutput, tgtStopOutput ]
 physics.producers.genCounter: {module_type: GenEventCounter }
 
 // Bring in info from the previous stage
-physics.filters.flashResample: {
+physics.filters.resamplingMixer: {
    module_type: ResamplingMixer
    fileNames: @nil
    readMode: "sequential"
@@ -40,12 +40,12 @@ physics.filters.flashResample: {
 // Point Mu2eG4 to the pre-simulated data
 physics.producers.g4run.MultiStageParameters: {
    simParticleNumberOffset: 100000
-   genInputHits:  [ "flashResample:mubeam" ]
-   inputSimParticles: "flashResample"
+   genInputHits:  [ "resamplingMixer:mubeam" ]
+   inputSimParticles: "resamplingMixer"
    inputMCTrajectories: ""
    inputPhysVolumeMultiInfo: "" # earlier info dropped
 }
-physics.producers.g4run.SDConfig.preSimulatedHits:  ["flashResample:virtualdetector"]
+physics.producers.g4run.SDConfig.preSimulatedHits:  ["resamplingMixer:virtualdetector"]
 
 //----------------------------------------------------------------
 // stopped muon daughter vetoing
@@ -108,8 +108,8 @@ physics.filters.detectorFilter: {
    ]
 }
 
-// Add genCounter and flashResample to the trigger path.
-physics.detPath: [ "genCounter", "flashResample", 
+// Add genCounter and resamplingMixer to the trigger path.
+physics.detPath: [ "genCounter", "resamplingMixer", 
    //need to remove compressPVDetector//  @sequence::physics.detPath
    "g4run",
    "g4consistent",
@@ -123,7 +123,7 @@ physics.detPath: [ "genCounter", "flashResample",
    "CaloShowerROSteps"
 ]
 
-physics.tgtFilter :  ["genCounter", "flashResample", g4run, g4consistent, stoppedMuonFinder, tgtStopFilter]
+physics.tgtFilter :  ["genCounter", "resamplingMixer", g4run, g4consistent, stoppedMuonFinder, tgtStopFilter]
 
 
 outputs.tgtStopOutput : {
@@ -155,4 +155,4 @@ physics.producers.g4run.Mu2eG4CommonCut:{
 }
 
 // Test:
-// physics.filters.flashResample.fileNames: [ "/pnfs/mu2e/tape/phy-sim/sim/mu2e/beam-g4s1-mubeam/g4-10-5/art/46/9c/sim.mu2e.beam-g4s1-mubeam.g4-10-5.002701_00002991.art" ]
+// physics.filters.resamplingMixer.fileNames: [ "/pnfs/mu2e/tape/phy-sim/sim/mu2e/beam-g4s1-mubeam/g4-10-5/art/46/9c/sim.mu2e.beam-g4s1-mubeam.g4-10-5.002701_00002991.art" ]

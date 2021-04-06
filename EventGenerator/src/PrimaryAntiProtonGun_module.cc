@@ -62,15 +62,15 @@
 #include "MCDataProducts/inc/SimParticleCollection.hh"
 #include "Mu2eUtilities/inc/copySimParticleCollection.hh"
 #include "MCDataProducts/inc/StepPointMCCollection.hh"
-
-
+ 
 // ROOT includes
-#include "TNtuple.h"
-#include "TTree.h"
 #include "TFile.h"
 #include "TH1F.h"
-#include "TH2F.h"
 #include "TH1D.h"
+#include "TH2D.h"
+#include "TF2.h"
+#include "TRandom3.h"
+#include "TRandom.h"
 
 // C++ includes
 #include <iostream>
@@ -105,6 +105,7 @@ namespace mu2e {
       fhicl::Atom<double> pHighFlat{ fhicl::Name("pHighFlat"), 9. };
       fhicl::Atom<bool> doHistograms{fhicl::Name("doHistograms"), false};
       fhicl::Atom<string> inputModuleLabel{fhicl::Name("inputModuleLabel"), "g4run"};
+      fhicl::Atom<int> weightmode{ fhicl::Name("weightmode"),1};
     };
 
     using Parameters = art::EDProducer::Table<Config>;
@@ -152,11 +153,8 @@ namespace mu2e {
 
     bool _doHistograms;
     string _inputModuleLabel;
-    unsigned int run;
-    unsigned int evt;
-    float xv,yv,zv;
-    TTree* _ntInelasticVertices;
 
+    int _weightmode; // 0:flat (no weights) 1:cross section*sqrt(acceptance) weights
 
     TH1F* _hPbarMomentum;
     TH1F* _hPbarCosTheta;
@@ -175,6 +173,9 @@ namespace mu2e {
     float eInitialProton{0.};
     bool first_protonInelastic{true};
 
+    // for weighted generator
+    TF2* _productionFunction;
+    TH2D* _h2FunctionMid;
 
 
   public:
@@ -183,7 +184,16 @@ namespace mu2e {
     virtual void beginRun(art::Run& ) override;
   };
 
-  void PrimaryAntiProtonGun::beginRun(art::Run& ) {}
+  void PrimaryAntiProtonGun::beginRun(art::Run& ) {
+    // first fill the histogram according to the TF2 function 
+    // (this seems to leave no bin effect) 
+    // then extract randomly from the histogram
+    // filling middle step histogram with 1e9 events
+    // this number must be much higher than the number of events per job
+    gRandom->SetSeed(0);
+    _h2FunctionMid -> FillRandom("_productionFunction", 1e9);
+    _h2FunctionMid -> Smooth(1);
+  }
 
   PrimaryAntiProtonGun::PrimaryAntiProtonGun(Parameters const& config):
     //
@@ -196,17 +206,14 @@ namespace mu2e {
     _phimax(config().phimax()),
     _pLowFlat(config().pLowFlat()),
     _pHighFlat(config().pHighFlat()),
-
-    // these configuration parameters go with a scheme where one throws flat and assigns a weight
-    // or one chooses from the (momentum, angle) histograms
-    // random numbers
     _eng(createEngine(art::ServiceHandle<SeedService>()->getSeed())),
     _randFlat(_eng),
     //
     // random numbers
     _randomUnitSphere(_eng, config().czmin(), config().czmax(), config().phimin(), config().phimax() ),
     _doHistograms(config().doHistograms()),
-    _inputModuleLabel(config().inputModuleLabel())
+    _inputModuleLabel(config().inputModuleLabel()),
+    _weightmode(config().weightmode())
   {
 
     //pick up particle mass and other constants
@@ -219,16 +226,10 @@ namespace mu2e {
 
     // set up histos
     if (_doHistograms)
-      {  
+      {
         art::ServiceHandle<art::TFileService> tfs;
         art::TFileDirectory tfdir = tfs->mkdir( "PrimaryAntiProtonGun" );
 
-	_ntInelasticVertices = tfs->make<TTree>( "ntvert", "Inelastic vertices ntuple");
-	_ntInelasticVertices->Branch("run",&run,"run/i");
-	_ntInelasticVertices->Branch("evt",&evt,"evt/i");
-	_ntInelasticVertices->Branch("xv",&xv,"xv/F");
-	_ntInelasticVertices->Branch("yv",&yv,"yv/F");
-	_ntInelasticVertices->Branch("zv",&zv,"zv/F");
         _hPbarMomentum = tfdir.make<TH1F>("_hpBarMomentum","generated pbar momentum",100,0.,10000.);
         _hPbarCosTheta = tfdir.make<TH1F>("_hPbarCosTheta","antiproton cos theta in Lab Frame",100,-1.,1.);
         _hPbarPhi = tfdir.make<TH1F>("_hPbarPhi","antiproton phi in Lab Frame",100,-M_PI,+M_PI);
@@ -239,10 +240,12 @@ namespace mu2e {
         _hzLocationOfInelastic = tfdir.make<TH1F>("_hzLocationOfInelastic","z location of inelastic", 400,-6300,-5900.);//nominal is -6164.5+-80
         _h2xyLocationOfInelastic = tfdir.make<TH2F>("_h2xyLocationOfInelastic","y vs x location of inelastic", 100,-100.,100., 100,-100.,100.);
         _hFoundInteractingProton = tfdir.make<TH1F>("_hFoundInteractingProton"," zero if wrote collection, one if did",2,0.,2.);
-       
-
       }
-
+    // for weighted generator
+    // used to generate according to sqrt(efficiency)*xSection
+    // the histogram is an hack to get rid of the binning effect of the TF2
+    _productionFunction= new TF2("_productionFunction","0.000001 * exp(-(x*5*(y+1)/1000.)) +  exp(-17*(y+1)) * TMath::Gaus(x, 2000, 700, 1)",0.,5500.,-1.,1.);
+    _h2FunctionMid = new TH2D("_h2FunctionMid", "intermediate result of extraction from the function", 200, 0., 5000., 200, -1., 1.);
   }
 
   //  PrimaryAntiProtonGun::~PrimaryAntiProtonGun(){}
@@ -255,13 +258,13 @@ namespace mu2e {
     // declarations
     CLHEP::Hep3Vector momInitialProton(0.,0.,0.);
     CLHEP::Hep3Vector posInitialProton(0.,0.,0.);
-    CLHEP::HepLorentzVector momPbar(0.,0.,0.,0.);
     CLHEP::HepRotation rot;
 
-    //
-    // this routine looks through the simparticles in the event.  It finds the first proton inelastic collision
-    // and writes out an antiproton thrown flat in 4pi wrt the momentum vector of the proton just before the inelastic
-    // collision.  The momentum is chosen flat between 0 and the kinematic limit for the momentum of that proton.
+    // this routine looks through the simparticles in the event.  
+    // It finds the first proton inelastic collision
+    // and writes out an antiproton using
+    // a flat (isotropic direction and flat momentum) or 
+    // a weighted generator (momentum and cos(theta) extracted from _h2FunctionMid
 
     art::Handle<SimParticleCollection> simParticleHandle;
     event.getByLabel(_inputModuleLabel,simParticleHandle);
@@ -271,12 +274,10 @@ namespace mu2e {
     // upgrade later for generality
     std::ostream& os = std::cout;
 
-    if (_verbosityLevel > 0){
+    if (_verbosityLevel > 1){
       os << "\n" << "SimParticleCollection has size = " << simParticles.size() << " particles." << std::endl;
       os << "ind      key    parent  pdgId       Start  Position            P            End Position               P     vol   process \n" ;
     }
-
-
 
     int numberOfProtonInelastics{0};
     int nonProtonInelastics{0};
@@ -299,7 +300,7 @@ namespace mu2e {
       art::Ptr<SimParticle> const& parentPtr = simPart.parent();
       int parentKey = -1;
       if(parentPtr) parentKey = int(parentPtr.key());
-      if(_verbosityLevel > 0) {
+      if(_verbosityLevel > 1) {
         os
           << std::setiosflags(std::ios::fixed | std::ios::right)
           << " " << std::setw(7) << key
@@ -428,59 +429,96 @@ namespace mu2e {
     // same as ROOT.
 
     double pHighThisProton_ = maxAntiProtonInCM.boost(betaCM).vect().mag();
+    if (_mandelS < (4*_mass)*(4*_mass)) {pHighThisProton_ = _pLowFlat;};     //set zero length momentum interval if energy in under threshold
 
-    if (_verbosityLevel > 1)
-      {
-        std::cout << "mandelstam S = " << _mandelS << std::endl;
-        std::cout << "max energy in cm, max momentum in cm = " << eStarMaxInCM_ << " " << pStarMaxInCM_ << std::endl;
-        std::cout << " initial proton energy and maximum pbar momentum = " <<  eInitialProton << " " << pHighThisProton_ << std::endl;
-      }
-    double pPbar = _randFlat.fire(_pLowFlat,pHighThisProton_);
-    double ePbar = sqrt(_mass*_mass + pPbar*pPbar);
-
-    if (_verbosityLevel > 0)
-      {
-        std::cout << " pLowFlat = " << _pLowFlat << " upperMomentum "
-                  << pHighThisProton_ << " " << ePbar << std::endl;
-      }
-
+    if (_verbosityLevel > 2){
+      std::cout << " pLowFlat = " << _pLowFlat << " upperMomentum "
+		<< pHighThisProton_ << " " << std::endl;
+      std::cout << "mandelstam S = " << _mandelS << std::endl;
+      std::cout << "max energy in cm, max momentum in cm = " << eStarMaxInCM_ << " " << pStarMaxInCM_ << std::endl;
+      std::cout << " initial proton energy and maximum pbar momentum = " <<  eInitialProton << " " << pHighThisProton_ << std::endl;
+    }
     //
-    // Generated  momentum.
-    momPbar.setVect(_randomUnitSphere.fire(pPbar));
-    momPbar.setE(ePbar);
-
-    if (_verbosityLevel > 0)
+    CLHEP::HepLorentzVector momPbar(0.,0.,0.,0.);
+    double pPbar;
+    // Select generator
+    switch (_weightmode){
+    case 0: // flat generator
       {
-        std::cout << "from PrimaryAntiProtonGun, flat option, e and p = "
-                  << ePbar << " " << pPbar << " " << momPbar << std::endl;
+	//Generate momentum magnitude 
+	pPbar = _randFlat.fire(_pLowFlat,pHighThisProton_);
+	// Generate momentum vector
+	momPbar.setVect(_randomUnitSphere.fire(pPbar));
+	if (_verbosityLevel > 2){
+	  std::cout << "PrimaryAntiProtonGun (flat Generator): p=" << pPbar << " " << momPbar << std::endl;
+	}
+	break;
       }
+    case 1: // weighted generator with weight: sqrt(efficiency)*xsection
+      {
+	double costheta;
+	_h2FunctionMid -> GetRandom2(pPbar, costheta);
+	int pPbarCounter=0;
+	//hack to generate up to the kinematic limit, need to bypass the case of pmax = 0 and not get stuck in an infinite loop.
+	while( (pPbar >= pHighThisProton_) && (pPbarCounter < 10) ) {
+	  pPbarCounter++;
+	  if (_verbosityLevel > 2){
+	    std::cout << "PrimaryAntiProtonGun (weighted Generator): invalid production !" << "pPbar = " << pPbar << "  pHighThisProton_ = " << pHighThisProton_ << " RESAMPLE " << pPbarCounter << std::endl;
+	  }
+	  _h2FunctionMid -> GetRandom2(pPbar, costheta);
+	}    
+	if(pPbarCounter >= 10){ // use flat generator instead
+	  if (_verbosityLevel > 2){
+	    std::cout << "PrimaryAntiProtonGun: weighted generator failes 10 times,  using flat generator instead" << std::endl;
+	  }
+	  pPbar = _randFlat.fire(_pLowFlat,pHighThisProton_);
+	  momPbar.setVect(_randomUnitSphere.fire(pPbar));
+	}
+	else{	
+	  double theta = acos(costheta);
+	  double phi = _randFlat.fire(0, CLHEP::twopi);
+	  CLHEP::Hep3Vector momPbarTri(0.,0.,0.);
+	  momPbarTri.setX(pPbar*cos(phi)*sin(theta));
+	  momPbarTri.setY(pPbar*sin(phi)*sin(theta));
+	  momPbarTri.setZ(pPbar*costheta);
+	  momPbar.setVect(momPbarTri);
+	  if (_verbosityLevel > 2){
+	    std::cout << "PrimaryAntiProtonGun (weighted Generator): p=" << pPbar << " " << momPbar << std::endl;
+	  }
+	}
+	break;
+      }
+    default: // use flat generator as default
+      {
+	//Generate momentum magnitude 
+	pPbar = _randFlat.fire(_pLowFlat,pHighThisProton_);
+	// Generate momentum vector
+	momPbar.setVect(_randomUnitSphere.fire(pPbar));
+	if (_verbosityLevel > 2){
+	  std::cout << "PrimaryAntiProtonGun (default flat Generator): p=" << pPbar << " " << momPbar << std::endl;
+	}
+	break;
+      }
+    }
+
+    double ePbar = sqrt(_mass*_mass + pPbar*pPbar);
+    momPbar.setE(ePbar);
 
     // Add the antiproton to the list of generated particles.
     // Convert position and momentum to Mu2e coordinates
-    if (_doHistograms)
-      {
-	run  = event.id().run();
-	evt  = event.id().event();
-	xv  = xInelastic-3904.;
-	yv  = yInelastic;
-	zv  = zInelastic;	   
-	_ntInelasticVertices->Fill();
-
-
-        _hPbarMomentum->Fill(momPbar.vect().mag());
-        _hPbarCosTheta->Fill(momPbar.cosTheta());
-        _hPbarPhi->Fill(momPbar.phi());
-        _hxLocationOfInelastic->Fill(xInelastic-3904.);
-        _hyLocationOfInelastic->Fill(yInelastic);
-        _hzLocationOfInelastic->Fill(zInelastic);
-        _h2xyLocationOfInelastic->Fill(xInelastic-3904.,yInelastic);
-        if (_verbosityLevel > 0)
-          {
-            std::cout << " momentum, cos Theta, phi = " << momPbar.vect().mag()
-                      << " " << momPbar.cosTheta() << " " << momPbar.phi() << std::endl;
-          }
-
+    if (_doHistograms){
+      _hPbarMomentum->Fill(momPbar.vect().mag());
+      _hPbarCosTheta->Fill(momPbar.cosTheta());
+      _hPbarPhi->Fill(momPbar.phi());
+      _hxLocationOfInelastic->Fill(xInelastic-3904.);
+      _hyLocationOfInelastic->Fill(yInelastic);
+      _hzLocationOfInelastic->Fill(zInelastic);
+      _h2xyLocationOfInelastic->Fill(xInelastic-3904.,yInelastic);
+      if (_verbosityLevel > 0){
+	std::cout << " momentum, cos Theta, phi = " << momPbar.vect().mag()
+		  << " " << momPbar.cosTheta() << " " << momPbar.phi() << std::endl;
       }
+    }
 
 
     //

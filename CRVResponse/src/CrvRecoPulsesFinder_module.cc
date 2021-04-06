@@ -104,48 +104,51 @@ namespace mu2e
     art::Handle<CrvDigiCollection> crvDigiCollection;
     event.getByLabel(_crvDigiModuleLabel,"",crvDigiCollection);
 
-    size_t waveformIndex = 0;
-    while(waveformIndex<crvDigiCollection->size())
-    {
-      const CrvDigi &digi = crvDigiCollection->at(waveformIndex);
-      const CRSScintillatorBarIndex &barIndex = digi.GetScintillatorBarIndex();
-      int SiPM = digi.GetSiPMNumber();
-      unsigned int startTDC = digi.GetStartTDC();
-      std::vector<unsigned int> ADCs;
-      std::vector<size_t> waveformIndices;
-      for(size_t i=0; i<CrvDigi::NSamples; i++) ADCs.push_back(digi.GetADCs()[i]);
-      waveformIndices.push_back(waveformIndex);
+    if (crvDigiCollection.isValid()) {
 
-      //checking following digis whether they are a continuation of the current digis
-      //if that is the case, append the next digis
-      while(++waveformIndex<crvDigiCollection->size())
-      {
-        const CrvDigi &nextDigi = crvDigiCollection->at(waveformIndex);
-        if(barIndex!=nextDigi.GetScintillatorBarIndex()) break;
-        if(SiPM!=nextDigi.GetSiPMNumber()) break;
-        if(startTDC+ADCs.size()!=nextDigi.GetStartTDC()) break;
-        for(size_t i=0; i<CrvDigi::NSamples; i++) ADCs.push_back(nextDigi.GetADCs()[i]);
-        waveformIndices.push_back(waveformIndex);
-      }
+      size_t waveformIndex = 0;
+      while(waveformIndex<crvDigiCollection->size())
+	{
+	  const CrvDigi &digi = crvDigiCollection->at(waveformIndex);
+	  const CRSScintillatorBarIndex &barIndex = digi.GetScintillatorBarIndex();
+	  int SiPM = digi.GetSiPMNumber();
+	  unsigned int startTDC = digi.GetStartTDC();
+	  std::vector<unsigned int> ADCs;
+	  std::vector<size_t> waveformIndices;
+	  for(size_t i=0; i<CrvDigi::NSamples; i++) ADCs.push_back(digi.GetADCs()[i]);
+	  waveformIndices.push_back(waveformIndex);
 
-      _makeCrvRecoPulses->SetWaveform(ADCs, startTDC, _digitizationPeriod, _pedestal, _calibrationFactor, _calibrationFactorPulseHeight, _darkNoise);
+	  //checking following digis whether they are a continuation of the current digis
+	  //if that is the case, append the next digis
+	  while(++waveformIndex<crvDigiCollection->size())
+	    {
+	      const CrvDigi &nextDigi = crvDigiCollection->at(waveformIndex);
+	      if(barIndex!=nextDigi.GetScintillatorBarIndex()) break;
+	      if(SiPM!=nextDigi.GetSiPMNumber()) break;
+	      if(startTDC+ADCs.size()!=nextDigi.GetStartTDC()) break;
+	      for(size_t i=0; i<CrvDigi::NSamples; i++) ADCs.push_back(nextDigi.GetADCs()[i]);
+	      waveformIndices.push_back(waveformIndex);
+	    }
 
-      unsigned int n = _makeCrvRecoPulses->GetNPulses();
-      for(unsigned int j=0; j<n; j++)
-      {
-        double pulseTime   = _makeCrvRecoPulses->GetPulseTime(j);
-        int    PEs         = _makeCrvRecoPulses->GetPEs(j);
-        int    PEsPulseHeight = _makeCrvRecoPulses->GetPEsPulseHeight(j);
-        double pulseHeight = _makeCrvRecoPulses->GetPulseHeight(j); 
-        double pulseBeta   = _makeCrvRecoPulses->GetPulseBeta(j);
-        double pulseFitChi2= _makeCrvRecoPulses->GetPulseFitChi2(j);
-        double LEtime      = _makeCrvRecoPulses->GetLEtime(j);
-//        if(pulseTime<0) continue;
-//        if(pulseTime>_microBunchPeriod) continue;
-        if(PEs<_minPEs) continue; 
-        crvRecoPulseCollection->emplace_back(PEs, PEsPulseHeight, pulseTime, pulseHeight, pulseBeta, pulseFitChi2, LEtime, 
-                                                  waveformIndices, barIndex, SiPM);
-      }
+	  _makeCrvRecoPulses->SetWaveform(ADCs, startTDC, _digitizationPeriod, _pedestal, _calibrationFactor, _calibrationFactorPulseHeight, _darkNoise);
+
+	  unsigned int n = _makeCrvRecoPulses->GetNPulses();
+	  for(unsigned int j=0; j<n; j++)
+	    {
+	      double pulseTime   = _makeCrvRecoPulses->GetPulseTime(j);
+	      int    PEs         = _makeCrvRecoPulses->GetPEs(j);
+	      int    PEsPulseHeight = _makeCrvRecoPulses->GetPEsPulseHeight(j);
+	      double pulseHeight = _makeCrvRecoPulses->GetPulseHeight(j); 
+	      double pulseBeta   = _makeCrvRecoPulses->GetPulseBeta(j);
+	      double pulseFitChi2= _makeCrvRecoPulses->GetPulseFitChi2(j);
+	      double LEtime      = _makeCrvRecoPulses->GetLEtime(j);
+	      //        if(pulseTime<0) continue;
+	      //        if(pulseTime>_microBunchPeriod) continue;
+	      if(PEs<_minPEs) continue; 
+	      crvRecoPulseCollection->emplace_back(PEs, PEsPulseHeight, pulseTime, pulseHeight, pulseBeta, pulseFitChi2, LEtime, 
+						   waveformIndices, barIndex, SiPM);
+	    }
+	}
     }
 
     event.put(std::move(crvRecoPulseCollection));

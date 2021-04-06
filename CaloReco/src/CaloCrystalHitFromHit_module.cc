@@ -1,10 +1,10 @@
 // New patch to include noise and DAQ jitter effects in time resolution
 // 1 batch in 2024-2025: 
-// 200 keV electronics, 455 keV RIN+Dark, 200 ps DAQ JITTER
-// set aCorr=6.745 bCorr=0.204
+// 200 keV electronics, 405 keV RIN+Dark, 200 ps DAQ JITTER
+// set aCorr=6.285 bCorr=0.202
 // 2 batches in 2025: 
-// 200 keV electronics noise, 600 keV RIN+Dark noise, 200 ps DAQ JITTER
-// set aCorr=8.075 bCorr=0.209
+// 200 keV electronics noise, 582 keV RIN+Dark noise, 200 ps DAQ JITTER
+// set aCorr=7.911 bCorr=0.208
 // Noise levels are from doc-db 35519
 // DAQ jitter is from doc-db 35392 assuming ~7 DTCs in chain to include also the tracker (no DAQ jitter in the tracker at the moment)
 // Crystal time resolution as function of noise levels is from Bertrand (doc-db in preparation)

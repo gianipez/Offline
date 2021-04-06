@@ -179,16 +179,16 @@ physics : {
 
    //================================================================
    motherFilter: [ g4run, g4consistent,
-      stoppedMuonFinder, stoppedMuonDaughters,
-      outOfTargetMuonFinder, outOfTargetMuonDaughters,
-      mothersFilter, compressPVMothers
-   ]
+		   stoppedMuonFinder, stoppedMuonDaughters,
+		   outOfTargetMuonFinder, outOfTargetMuonDaughters,
+		   mothersFilter, compressPVMothers
+		  ]
 
    trigCRV: [ g4run, g4consistent,
-      stoppedMuonFinder, stoppedMuonDaughters,
-      outOfTargetMuonFinder, outOfTargetMuonDaughters,
-      crvFilter, compressPVCRV
-   ]
+	      stoppedMuonFinder, stoppedMuonDaughters,
+	      outOfTargetMuonFinder, outOfTargetMuonDaughters,
+	      crvFilter, compressPVCRV
+	     ]
 
    tgtFilter :  [g4run, g4consistent, stoppedMuonFinder, tgtStopFilter, compressPVTGTStops]
    ootFilter :  [g4run, g4consistent, outOfTargetMuonFinder, ootStopFilter, compressPVOOTStops]
@@ -215,16 +215,16 @@ outputs: {
    }
 
    crvOutput : {
-      module_type : RootOutput
-      SelectEvents: [trigCRV]
-      outputCommands:   [ "drop *_*_*_*",
-         "keep mu2e::GenParticles_*_*_*",
-         "keep mu2e::GenEventCount_*_*_*",
-         "keep mu2e::StatusG4_*_*_*",
-         "keep *_crvFilter_*_*"              ,
-         "keep *_compressPVCRV_*_*"
-      ]
-      fileName    : "sim.owner.DS-crv.version.sequencer.art"
+       module_type   : RootOutput
+       SelectEvents  : [ trigCRV ]
+       outputCommands:   [ "drop *_*_*_*",
+			   "keep mu2e::GenParticles_*_*_*",
+			   "keep mu2e::GenEventCount_*_*_*",
+			   "keep mu2e::StatusG4_*_*_*",
+			   "keep *_crvFilter_*_*"              ,
+			   "keep *_compressPVCRV_*_*"
+			  ]
+       fileName      : "sim.owner.DS-crv.version.sequencer.art"
    }
 
    tgtStopOutput : {
